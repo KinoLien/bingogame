@@ -1,7 +1,7 @@
 var express = require('express');
 var fs = require('fs');
 var Db = require("./config/initializers/database.js")
-var secrets = require('./config/secrets');
+// var secrets = require('./config/secrets');
 // var webpack = require('webpack');
 var app = express();
 var http = require('http');

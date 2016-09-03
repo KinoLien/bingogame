@@ -4,7 +4,7 @@ var bodyParser = require('body-parser');
 var session      = require('express-session');
 var flash    = require('connect-flash');
 var path = require('path');
-var secrets = require('./secrets');
+// var secrets = require('./secrets');
 var methodOverride = require('method-override');
 
 module.exports = function (app, passport) {
