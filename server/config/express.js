@@ -8,7 +8,10 @@ var path = require('path');
 var methodOverride = require('method-override');
 
 module.exports = function (app, passport) {
-  app.set('port', (process.env.PORT || 5000));
+  var isProduction = process.env.NODE_ENV === 'production';
+  var port = isProduction? 80 : 5000;
+  
+  app.set('port', port);
 
   // X-Powered-By header has no functional value.
   // Keeping it makes it easier for an attacker to build the site's profile
@@ -20,7 +23,16 @@ module.exports = function (app, passport) {
 
   app.set('view cache', false);
 
-  app.use(session({ secret: 'ilovescotchscotchyscotchscotch' })); // session secret
+  if(isProduction) {
+    app.use(session({
+      secret: 'tuabingoconsole',
+      resave: true,
+      saveUninitialized: false
+    }));
+  }else{
+    app.use(session({ secret: 'ilovescotchscotchyscotchscotch' })); // session secret  
+  }
+  
   app.use(passport.initialize());
   app.use(passport.session()); // persistent login sessions
   app.use(flash()); 
@@ -80,11 +92,10 @@ module.exports = function (app, passport) {
   //   )
   // };
 
-  var node_env = process.env.NODE_ENV;
   console.log('--------------------------');
   console.log('===> 😊  Starting Server . . .');
   console.log('===>  Environment: ' + node_env);
-  if(node_env === 'production') {
+  if(isProduction) {
     console.log('===> 🚦  Note: In order for authentication to work in production');
     console.log('===>           you will need a secure HTTPS connection');
     // sess.cookie.secure = true; // Serve secure cookies
