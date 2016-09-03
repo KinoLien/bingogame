@@ -2,64 +2,69 @@
 
 var Schema = {
 
-  uniqueusers:{
-    id:{type: "increments",  primary: true},
-    email: {type: "string", maxlength: 255, unique: true, index: true},
-    created_at: {type: "dateTime", defaultTo: 'now' },
-    updated_at: {type: "dateTime", defaultTo: 'now' },
-  },
-  domains: {
+  questions: {
     id: {type: "increments",  primary: true},
-    host: {type: "string", maxlength: 255, unique: true, index: true},
-    is_send_email: {type: "boolean" , defaultTo: false},
     title: {type: "string", maxlength: 255, defaultTo: ''},
-    created_at: {type: "dateTime", defaultTo: 'now' },
-    updated_at: {type: "dateTime", defaultTo: 'now' },
+    content: {type: "string", defaultTo: '' },
+    explain: {type: "string", defaultTo: '' }
   },
-  domainusers: {
+
+  options: {
     id: {type: "increments",  primary: true},
-    uid: {type: "string", maxlength: 255, index: true},
-    domain_id: {type: "integer", unsigned: true, index: true},
-    uniqueusers_id: {type: "integer", nullable: true, unsigned: true, index: true},
-    is_login: {type: "boolean" , defaultTo: false},
-    role: {type: "string", maxlength: 255, defaultTo: ''},
-    name: {type: "string", maxlength: 255},
-    image: {type: "text", nullable: true},
-    description: {type: "text", nullable: true},
-    created_at: {type: "dateTime", defaultTo: 'now'},
-    updated_at: {type: "dateTime", defaultTo: 'now' },
+    q_id: {type: "integer", unsigned: true, index: true},
+    content: {type: "string", defaultTo: '' },
+    is_answer: {type: "boolean" , defaultTo: false}
   },
-  rooms: {
+
+  // scores: {
+  //   id: {type: "increments",  primary: true},
+  //   blocks: {type: "integer", unsigned: true, defaultTo: 0},
+  //   lines: {type: "integer", unsigned: true, defaultTo: 0},
+  //   created_at: {type: "dateTime", defaultTo: 'now' },
+  //   updated_at: {type: "dateTime", defaultTo: 'now' }
+  // },
+
+  gifts: {
     id: {type: "increments",  primary: true},
-    domain_id: {type: "integer",  unsigned: true, index: true},
-    last_message_id: {type: "integer", nullable: true,  unsigned: true, index: true},
-    created_at: {type: "dateTime", defaultTo: 'now' },
-    updated_at: {type: "dateTime", defaultTo: 'now' },  // changed by each message
+    type: {type: "string", maxlength: 255},
+    quantity: {type: "integer", unsigned: true, defaultTo: 0},
+    earn_condition: {type: "string", defaultTo: '' }
   },
-  messages:{
+
+  players: {
     id: {type: "increments",  primary: true},
-    room_id: {type: "integer",  unsigned: true, index: true},
-    domainuser_id: {type: "integer", unsigned: true, index: true},
-    content: {type: "text"},
-    metatype: {type: "string", maxlength: 255},
+    unique_id: {type: "string", maxlength: 255, index: true},
+    g_id: {type: "integer", unsigned: true, index: true},
+    lines: {type: "integer", unsigned: true, defaultTo: 0},
+    from: {type: "string", maxlength: 255},
+    name: {type: "string", maxlength: 255, defaultTo: '' },
+    address: {type: "string", defaultTo: '' },
+    status: {type: "string", maxlength: 255, defaultTo: ''},
     created_at: {type: "dateTime", defaultTo: 'now' },
-    updated_at: {type: "dateTime", defaultTo: 'now' },
+    updated_at: {type: "dateTime", defaultTo: 'now' }
   },
-  participants: {
+
+  answerlogs: {
     id: {type: "increments",  primary: true},
-    room_id: {type: "integer", unsigned: true, index: true},
-    domainuser_id: {type: "integer", unsigned: true, index: true},
-    last_message_id: {type: "integer", nullable: true,  unsigned: true, index: true}, // has read meessage_id
-    unread_messages_count: {type: "integer", defaultTo: 0 },
-    created_at: {type: "dateTime", defaultTo: 'now' },
-    updated_at: {type: "dateTime", defaultTo: 'now' },
+    p_id: {type: "integer", unsigned: true, index: true},
+    q_id: {type: "integer", unsigned: true, index: true},
+    correct: {type: "boolean" , defaultTo: false},
+    block_position: {type: "string", maxlength: 64},
+    created_at: {type: "dateTime", defaultTo: 'now' }
   },
+// question Q (id, text, explain) 
+// option O (id, Q_id, text, is_answer)
+// score S (id, scores, lines, final_blocks) Date
+// final_blocks: [[1,0,0,0,1],[1,1,0,0,1]...]
+// gift G (id, type, quantity, locked_quantity, earn_condition) Date
+// player P (id, unique_id, S_id, G_id, from, name, address, status) Date
+// status: ‘locked’, ‘fail’, ‘winner’, ‘'
+// log L (id, P_id, Q_id, correct, blok_position) Date
   session: {
     sid: {type: "string",  primary: true},
     sess: {type: "json", nullable: false},
     expire: {type: "dateTime", nullable: false}
   }
-
 };
 
 module.exports = Schema;

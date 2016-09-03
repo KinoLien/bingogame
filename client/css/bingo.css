@@ -1,0 +1,514 @@
+/* line 11, ../sass/style.scss */
+h1, h2, h3, h4, h5, h6, p {
+  margin-bottom: 1em;
+}
+
+/* line 15, ../sass/style.scss */
+input {
+  border: 1px solid #b3b3b3;
+  padding: 0.6em;
+  border-radius: 2px;
+  font-size: 14px;
+}
+
+/* line 24, ../sass/style.scss */
+.caption {
+  font-size: 12px;
+  color: gray;
+}
+
+/* line 31, ../sass/style.scss */
+.spinner {
+  width: 40px;
+  height: 40px;
+  position: relative;
+  margin: 100px auto;
+}
+
+/* line 39, ../sass/style.scss */
+.double-bounce1, .double-bounce2 {
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
+  background-color: #1b88e5;
+  opacity: 0.6;
+  position: absolute;
+  top: 0;
+  left: 0;
+  -webkit-animation: sk-bounce 2.0s infinite ease-in-out;
+  animation: sk-bounce 2.0s infinite ease-in-out;
+}
+
+/* line 53, ../sass/style.scss */
+.double-bounce2 {
+  -webkit-animation-delay: -1.0s;
+  animation-delay: -1.0s;
+}
+
+@-webkit-keyframes sk-bounce {
+  0%, 100% {
+    -webkit-transform: scale(0);
+  }
+  50% {
+    -webkit-transform: scale(1);
+  }
+}
+@keyframes sk-bounce {
+  0%, 100% {
+    transform: scale(0);
+    -webkit-transform: scale(0);
+  }
+  50% {
+    transform: scale(1);
+    -webkit-transform: scale(1);
+  }
+}
+/* line 75, ../sass/style.scss */
+body {
+  line-height: 19.6px;
+  font-size: 14px;
+  font-family: sans-serif;
+  background: white;
+}
+
+/* line 82, ../sass/style.scss */
+.tab {
+  color: rgba(0, 0, 0, 0.4);
+  font-weight: bold;
+  padding: 0 1em;
+}
+/* line 86, ../sass/style.scss */
+.tab.active {
+  color: #10528a;
+  border-bottom: 2px solid #10528a;
+}
+/* line 88, ../sass/style.scss */
+.tab.active:hover {
+  color: #1b88e5;
+  border-bottom: 2px solid #1b88e5;
+}
+
+/* line 96, ../sass/style.scss */
+a {
+  position: relative;
+}
+
+/* line 101, ../sass/style.scss */
+sup {
+  font-size: 10px;
+  color: white;
+  background: #1b88e5;
+  padding: 3px;
+  display: inline-block;
+  line-height: 12px;
+  min-width: 12px;
+  height: 12px;
+  border-radius: 10px;
+  font-weight: bold;
+  position: absolute;
+  top: 5px;
+  right: -5px;
+}
+
+/* line 117, ../sass/style.scss */
+.button {
+  min-width: 48px;
+  display: flex;
+  justify-content: center;
+}
+/* line 121, ../sass/style.scss */
+.button i {
+  margin: auto;
+}
+
+/* line 126, ../sass/style.scss */
+.unit a {
+  color: black;
+}
+
+/* line 130, ../sass/style.scss */
+a {
+  color: #10528a;
+  text-decoration: none;
+}
+/* line 133, ../sass/style.scss */
+a:hover {
+  color: #1b88e5;
+}
+
+/* line 138, ../sass/style.scss */
+.text {
+  font-size: 12.6px;
+  line-height: 21px;
+  color: gray;
+}
+
+/* line 144, ../sass/style.scss */
+.extra {
+  font-size: 12.6px;
+  color: #C0C0C0;
+}
+
+/* line 148, ../sass/style.scss */
+.timestamp {
+  font-size: 11.2px;
+  color: #C0C0C0;
+}
+
+/* line 153, ../sass/style.scss */
+.spacer {
+  padding: 2px 10px;
+  font-size: 12px;
+  font-weight: bold;
+  color: gray;
+  background: rgba(0, 0, 0, 0.02);
+  border-top: 1px solid rgba(0, 0, 0, 0.1);
+}
+
+/* line 162, ../sass/style.scss */
+input.filter {
+  text-align: center;
+  border: 1px solid rgba(0, 0, 0, 0.1);
+  font-size: 12.6px;
+  height: 28px;
+  border-radius: 3px;
+  padding: 3px;
+  width: 100%;
+  background: rgba(0, 0, 0, 0.05);
+}
+
+/* line 173, ../sass/style.scss */
+.chat-title {
+  margin: auto;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  overflow: hidden;
+  width: 200px;
+  max-width: auto;
+}
+
+/* line 184, ../sass/style.scss */
+.unit.unread {
+  font-weight: bold;
+}
+/* line 186, ../sass/style.scss */
+.unit.unread .text {
+  color: black;
+}
+/* line 189, ../sass/style.scss */
+.unit.unread .timestamp, .unit.unread .extra {
+  font-weight: normal;
+}
+/* line 193, ../sass/style.scss */
+.unit.unread .avatar img {
+  -webkit-animation-name: stretch;
+  animation-name: stretch;
+  -webkit-animation-duration: 1s;
+  animation-duration: 1s;
+  -webkit-animation-delay: 0;
+  animation-delay: 0;
+  -webkit-animation-direction: alternate;
+  animation-direction: alternate;
+  -webkit-animation-iteration-count: infinite;
+  animation-iteration-count: infinite;
+  -webkit-animation-fill-mode: none;
+  animation-fill-mode: none;
+  -webkit-animation-play-state: running;
+  animation-play-state: running;
+}
+
+@-webkit-keyframes stretch {
+  0% {
+    box-shadow: 0 0 0 #1b88e5;
+    border: 1px solid rgba(34, 198, 240, 0.2);
+  }
+  100% {
+    box-shadow: 0 0 20px #1b88e5;
+    border: 1px solid white;
+  }
+}
+@keyframes stretch {
+  0% {
+    box-shadow: 0 0 0 #1b88e5;
+    border: 1px solid rgba(34, 198, 240, 0.2);
+  }
+  100% {
+    box-shadow: 0 0 20px #1b88e5;
+    border: 1px solid white;
+  }
+}
+/* line 236, ../sass/style.scss */
+* {
+  margin: 0;
+  padding: 0;
+  border: none;
+  outline: none;
+}
+
+/* line 245, ../sass/style.scss */
+.clear {
+  clear: both;
+  overflow: auto;
+  display: block;
+  width: 100%;
+}
+
+/* line 252, ../sass/style.scss */
+#content {
+  padding: 64px 16px;
+}
+
+/* line 256, ../sass/style.scss */
+#new-message-notification {
+  display: flex;
+  text-align: center;
+  width: 100%;
+  position: fixed;
+  z-index: 2;
+  bottom: 80px;
+}
+/* line 264, ../sass/style.scss */
+#new-message-notification div {
+  box-shadow: 0 1px 7px rgba(0, 0, 0, 0.3);
+  margin: 0 auto;
+  line-height: 24px;
+  background: #1b88e5;
+  border-radius: 14px;
+  padding: 0.2em 1em 0.2em 0.5em;
+}
+/* line 268, ../sass/style.scss */
+#new-message-notification div a {
+  color: white;
+}
+/* line 274, ../sass/style.scss */
+#new-message-notification div:hover {
+  background: #49a0ea;
+}
+
+/* line 280, ../sass/style.scss */
+#chat-list.fixed {
+  z-index: 10;
+  background: rgba(255, 255, 255, 0.9);
+  -webkit-backdrop-filter: blur(10px);
+  backdrop-filter: blur(10px);
+  position: fixed;
+  top: 0;
+  right: 0;
+  left: 0;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+}
+
+/* line 292, ../sass/style.scss */
+#chat-content {
+  padding: 100px 0;
+  box-sizing: border-box;
+  height: 100;
+  color: black;
+  overflow: auto;
+}
+/* line 298, ../sass/style.scss */
+#chat-content .me {
+  margin: 10px;
+  text-align: left;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+}
+/* line 305, ../sass/style.scss */
+#chat-content .extra {
+  position: absolute;
+  bottom: 0em;
+  margin: 0;
+  padding: 0;
+  font-size: 11px;
+  line-height: 15px;
+  white-space: nowrap;
+  width: 80px;
+}
+/* line 315, ../sass/style.scss */
+#chat-content .message-text {
+  text-align: left;
+  color: black;
+  white-space: normal;
+  word-wrap: break-word;
+  background: rgba(0, 0, 0, 0.1);
+  margin: 5px;
+  border-radius: 14px;
+  padding: 0.5em 0.8em;
+  max-width: 70%;
+  display: inline-block;
+  position: relative;
+}
+/* line 316, ../sass/style.scss */
+#chat-content .message-text img {
+  max-width: 100%;
+  border-radius: 9.8px;
+  margin: 0.3em 0;
+}
+/* line 332, ../sass/style.scss */
+#chat-content .message-text .extra {
+  right: -90px;
+}
+/* line 336, ../sass/style.scss */
+#chat-content .friend {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  margin: 10px;
+  text-align: right;
+}
+/* line 342, ../sass/style.scss */
+#chat-content .friend .message-text {
+  text-align: right;
+  color: white;
+  background: #10528a;
+  margin: 5px;
+  text-align: left;
+}
+/* line 348, ../sass/style.scss */
+#chat-content .friend .message-text .extra {
+  left: -90px;
+  text-align: right;
+}
+
+/* line 356, ../sass/style.scss */
+.message-box {
+  position: fixed;
+  height: 56px;
+  bottom: 0;
+  width: 100%;
+  background: white;
+  border-top: 1px solid rgba(0, 0, 0, 0.1);
+}
+/* line 363, ../sass/style.scss */
+.message-box textarea {
+  margin: auto;
+  word-wrap: break-word;
+  border: 1px solid rgba(0, 0, 0, 0.1);
+  font-size: 14px;
+  line-height: 25.2px;
+  height: 25.2px;
+  border-radius: 3px;
+  padding: 5px;
+  width: 100%;
+  background: rgba(0, 0, 0, 0.05);
+}
+
+/* line 377, ../sass/style.scss */
+.search, .chat-title {
+  height: 42px;
+  line-height: 42px;
+  padding: 0 10px;
+  border-top: 1px solid rgba(0, 0, 0, 0.1);
+}
+
+/* line 384, ../sass/style.scss */
+.nav {
+  height: 42px;
+  line-height: 42px;
+}
+
+/* line 392, ../sass/style.scss */
+.three-col {
+  display: -webkit-flex;
+  display: -ms-flexbox;
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+}
+/* line 393, ../sass/style.scss */
+.three-col > div {
+  display: flex;
+}
+/* line 401, ../sass/style.scss */
+.three-col .right-col {
+  text-align: right;
+}
+/* line 404, ../sass/style.scss */
+.three-col .mid-col {
+  -webkit-flex-grow: 1;
+  -ms-flex-positive: 1;
+  flex-grow: 1;
+  justify-content: center;
+  text-align: center;
+}
+
+/* line 413, ../sass/style.scss */
+.unit {
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+  cursor: pointer;
+  border-top: 1px solid rgba(0, 0, 0, 0.1);
+  padding: 5px 10px 5px 0px;
+  overflow: hidden;
+  height: 70px;
+}
+/* line 423, ../sass/style.scss */
+.unit:active {
+  background: rgba(34, 198, 240, 0.05);
+}
+
+/* line 427, ../sass/style.scss */
+.unit.notification {
+  padding-left: 15px;
+  height: auto;
+}
+/* line 430, ../sass/style.scss */
+.unit.notification a {
+  height: auto;
+}
+
+/* line 434, ../sass/style.scss */
+.content {
+  margin-top: 7px;
+  -webkit-flex-grow: 1;
+  -ms-flex-positive: 1;
+  flex-grow: 1;
+  height: 70px;
+  display: -webkit-flex;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-flex-direction: column;
+  -ms-flex-direction: column;
+  flex-direction: column;
+}
+
+/* line 448, ../sass/style.scss */
+.text {
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  width: 100%;
+}
+
+/* line 454, ../sass/style.scss */
+.people {
+  display: -webkit-flex;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-justify-content: space-between;
+  -ms-flex-pack: justify;
+  justify-content: space-between;
+}
+
+/* line 463, ../sass/style.scss */
+.avatar {
+  float: left;
+}
+/* line 465, ../sass/style.scss */
+.avatar .wrapper {
+  display: -webkit-flex;
+  display: -ms-flexbox;
+  display: flex;
+  height: 70px;
+  width: 70px;
+}
+/* line 472, ../sass/style.scss */
+.avatar img {
+  margin: auto;
+  width: 40px;
+  height: 40px;
+  border-radius: 100%;
+}

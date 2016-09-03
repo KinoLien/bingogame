@@ -10,79 +10,91 @@ var path = require('path');
 // var compiled_app_module_path = path.resolve(__dirname, '../../', 'public', 'assets', 'server.js');
 // var App = require(compiled_app_module_path);
 
-var checkAndUpdateCookie = function(req, res){
-  var cookies = {};
-  req.headers && req.headers.cookie && req.headers.cookie.split(';').forEach(function(cookie) {
-    var parts = cookie.match(/(.*?)=(.*)$/)
-    cookies[ parts[1].trim() ] = (parts[2] || '').trim();
-  });
-  var updateCookieValue = cookies["_ce"];
-  var hasExist = !!updateCookieValue;
-  if(updateCookieValue){
-    // check if a valid cookie?
-    // update the cookie expires.
-  }else{
-    updateCookieValue = uuid.v4();
-  }
+// route middleware to make sure a user is logged in
+function isLoggedIn(req, res, next) {
 
-  res.cookie("_ce", updateCookieValue, {
-    maxAge: 1000 * 60 * 60 * 24 * 100,
-    httpOnly: true
-  });
+    // if user is authenticated in the session, carry on 
+    if (req.isAuthenticated()){
+      console.log("is auth");
+      return next();
+    }
+      
+    console.log("return to login");
+    // if they aren't redirect them to the home page
+    res.redirect('/console/login');
+} 
 
-  return hasExist;
-};
+module.exports = function(app, passport) {
 
-module.exports = function(app) {
+  app.get('/console', isLoggedIn, function (req, res, next) {
 
-  app.get('/client/index.html', function (req, res, next) {
-    var today = new Date();
-    
-    // var ua = new uaparser(req.headers['user-agent']);
-
-    // var agent = ua.getBrowser().name;
-    // if(agent == "Safari"){
-    //   fs.readFile(path.resolve(__dirname, '../..', 'client/index_nocookie.html'), "utf-8", function(err, page) {
-    //     res.writeHead(200, {'Content-Type': 'text/html'});
-    //     res.write(page.replace("{{ key }}", updateCookieValue).replace("{{ userAgent }}", agent));
-    //     res.end();
-    //   });
-    // }else{
-    //   res.cookie("_ce", updateCookieValue, {
-    //     maxAge: 1000 * 60 * 60 * 24 * 100,
-    //     httpOnly: true
-    //   });
-    //   res.sendFile(path.resolve(__dirname, '../..', 'client/index.html'));
-    // }
-    checkAndUpdateCookie(req, res);
-    
-    res.sendFile(path.resolve(__dirname, '../..', 'client/index.html'));
+    res.render(path.resolve(__dirname, '../', 'views/console/index.ejs'));
 
   });
 
-  app.get('/client/register', function (req, res, next) {
-    var referer = req.headers.referer;
-    if(referer){
-      console.log(referer);
-      if(checkAndUpdateCookie(req, res)){
-        res.sendStatus(404);
-      }else{
-        res.writeHead(200, {'Content-Type': 'text/html'});
-        res.write("<script>document.location.replace('" + referer + "')</script>");
-        res.end();
-      }
-    }else res.sendStatus(404);
+  // app.get('/client/register', function (req, res, next) {
+  //   var referer = req.headers.referer;
+  //   if(referer){
+  //     console.log(referer);
+  //     if(checkAndUpdateCookie(req, res)){
+  //       res.sendStatus(404);
+  //     }else{
+  //       res.writeHead(200, {'Content-Type': 'text/html'});
+  //       res.write("<script>document.location.replace('" + referer + "')</script>");
+  //       res.end();
+  //     }
+  //   }else res.sendStatus(404);
+  // });
+
+  // =====================================
+  // LOGIN ===============================
+  // =====================================
+  // show the login form
+  app.get('/console/login', function(req, res) {
+
+      // render the page and pass in any flash data if it exists
+      res.render(path.resolve(__dirname, '../', 'views/console/login.ejs'));
   });
 
-  app.get('/client/:project', function (req, res, next) {
-    var project = req.params.project;
-    res.sendFile(path.resolve(__dirname, '../../client', project));
+  // process the login form
+  app.post('/console/login', passport.authenticate('local-login', {
+      successRedirect : '/console/', // redirect to the secure profile section
+      failureRedirect : '/console/login', // redirect back to the signup page if there is an error
+      failureFlash : false // allow flash messages
+  }));
+
+  // =====================================
+  // LOGOUT ==============================
+  // =====================================
+  app.get('/console/logout', function(req, res) {
+      req.logout();
+      res.redirect('/console');
   });
 
-  app.get('/clientChangePath/:project', function (req, res, next) {
-    var project = req.params.project;
-    res.sendFile(path.resolve(__dirname, '../../client', project));
+  app.get('/client/:type(css|js)/:name', function (req, res, next) {
+    var type = req.params.type;
+    var name = req.params.name;
+    res.sendFile(path.resolve(__dirname, '../../client', type, name));
   });
+
+  // app.get('/clientChangePath/:project', function (req, res, next) {
+  //   var project = req.params.project;
+  //   res.sendFile(path.resolve(__dirname, '../../client', project));
+  // });
+
+  // app.get('/', function(req, res) {
+  //   var drinks = [
+  //       { name: 'Bloody Mary', drunkness: 3 },
+  //       { name: 'Martini', drunkness: 5 },
+  //       { name: 'Scotch', drunkness: 10 }
+  //   ];
+  //   var tagline = "Any code of your own that you haven't looked at for six or more months might as well have been written by someone else.";
+
+  //   res.render('pages/index', {
+  //       drinks: drinks,
+  //       tagline: tagline
+  //   });
+  // });
 
   // This is where the magic happens. We take the locals data we have already
   // fetched and seed our stores with data.
@@ -90,5 +102,4 @@ module.exports = function(app) {
   // app.get('*', function (req, res, next) {
   //   App.default(req, res);
   // });
-
 };

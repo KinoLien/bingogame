@@ -1,10 +1,13 @@
 var express = require('express');
+var cookieParser = require('cookie-parser');
 var bodyParser = require('body-parser');
+var session      = require('express-session');
+var flash    = require('connect-flash');
 var path = require('path');
 var secrets = require('./secrets');
 var methodOverride = require('method-override');
 
-module.exports = function (app) {
+module.exports = function (app, passport) {
   app.set('port', (process.env.PORT || 5000));
 
   // X-Powered-By header has no functional value.
@@ -13,12 +16,22 @@ module.exports = function (app) {
   app.disable('x-powered-by');
   app.set('views', path.join(__dirname, '..', 'views'));
 
+  app.set('view engine', 'ejs');
+
   app.set('view cache', false);
 
+  app.use(session({ secret: 'ilovescotchscotchyscotchscotch' })); // session secret
+  app.use(passport.initialize());
+  app.use(passport.session()); // persistent login sessions
+  app.use(flash()); 
+
+  app.use(cookieParser());
   app.use(bodyParser.json());
   app.use(bodyParser.urlencoded({extended: true})); // for parsing application/x-www-form-urlencoded
   app.use(methodOverride());
   app.use(express.static(path.join(__dirname, '../..', 'public')));
+ 
+  
 
   // I am adding this here so that the Heroku deploy will work
   // Indicates the app is behind a front-facing proxy,

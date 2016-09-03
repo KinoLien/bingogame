@@ -1,9 +1,9 @@
-var Messages = require('../models/messages').Messages;
+// var Messages = require('../models/messages').Messages;
 
 var service = require('../services/service');
 
 var _ = require('lodash');
-var i18n = require('i18n');
+// var i18n = require('i18n');
 
 // $ mongo
 // > db = new Mongo().getDB("ReactWebpackNode")
@@ -43,8 +43,8 @@ var socketCache = {};
 
 module.exports = function (socket, io) {
 
-  i18n.init(socket.request);
-  var __ = socket.request.__;
+  // i18n.init(socket.request);
+  // var __ = socket.request.__;
 
   var defaultRoom = socket.currentDomain + '-public';
 
@@ -220,7 +220,7 @@ module.exports = function (socket, io) {
           // if it has no name, create new one.
           promises.push(
             service.domainUserCount(socket.currentDomain).then(function(domainuser){
-              prop.name = socket.username = __("defaultName") + ' #' + (domainuser[0].count);
+              // prop.name = socket.username = __("defaultName") + ' #' + (domainuser[0].count);
             })
           );
         }
