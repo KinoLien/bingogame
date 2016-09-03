@@ -25,11 +25,7 @@ module.exports = function (app, passport) {
   app.set('view cache', false);
 
   if(isProduction) {
-    app.use(session({
-      secret: 'tuabingoconsole',
-      resave: true,
-      saveUninitialized: false
-    }));
+    app.use(session({ secret: 'tuabingoconsole' }));
   }else{
     app.use(session({ secret: 'ilovescotchscotchyscotchscotch' })); // session secret  
   }
