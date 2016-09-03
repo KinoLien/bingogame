@@ -10,8 +10,7 @@
     "start": "cross-env NODE_ENV=production supervisor server/index.js",
     "dev": "cross-env NODE_ENV=development supervisor server/index.js",
     "test": "cross-env NODE_ENV=test karma start",
-    "test:watch": "cross-env NODE_ENV=test npm test -- --watch --no-single-run",
-    "postinstall": "npm run build"
+    "test:watch": "cross-env NODE_ENV=test npm test -- --watch --no-single-run"
   },
   "author": "Kino",
   "license": "MIT",
