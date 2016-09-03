@@ -16,7 +16,7 @@
   "author": "Kino",
   "license": "MIT",
   "engines": {
-    "node": "5.x"
+    "node": "6.x"
   },
   "dependencies": {
     "autoprefixer": "^6.3.3",
