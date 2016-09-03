@@ -8,7 +8,8 @@ var path = require('path');
 var methodOverride = require('method-override');
 
 module.exports = function (app, passport) {
-  var isProduction = process.env.NODE_ENV === 'production';
+  var node_env = process.env.NODE_ENV;
+  var isProduction = node_env === 'production';
   var port = isProduction? 80 : 5000;
   
   app.set('port', port);
