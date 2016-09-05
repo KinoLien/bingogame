@@ -12,7 +12,7 @@ var path = require('path');
 
 // route middleware to make sure a user is logged in
 function isLoggedIn(req, res, next) {
-
+    if(process.env.NODE_ENV === 'development') return next();
     // if user is authenticated in the session, carry on 
     if (req.isAuthenticated()){
       console.log("is auth");
@@ -56,6 +56,12 @@ module.exports = function(app, passport) {
       res.render(path.resolve(__dirname, '../', 'views/console/login.ejs'));
   });
 
+  app.get('/console/:type(question|gift)', isLoggedIn, function(req, res, next){
+    var type = req.params.type;
+    res.render(path.resolve(__dirname, '../', 'views/console/' + type + '.ejs'));
+  });
+
+
   // process the login form
   app.post('/console/login', passport.authenticate('local-login', {
       successRedirect : '/console/', // redirect to the secure profile section
@@ -71,11 +77,13 @@ module.exports = function(app, passport) {
       res.redirect('/console');
   });
 
-  app.get('/client/:type(css|js)/:name', function (req, res, next) {
+
+  app.get('/client/:type(css|js)/:name', function(req, res, next) {
     var type = req.params.type;
     var name = req.params.name;
     res.sendFile(path.resolve(__dirname, '../../client', type, name));
   });
+
 
   // app.get('/clientChangePath/:project', function (req, res, next) {
   //   var project = req.params.project;

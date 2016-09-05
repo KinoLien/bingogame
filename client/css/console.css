@@ -38,3 +38,16 @@ body {
   border-top-left-radius: 0;
   border-top-right-radius: 0;
 }
+
+.modal textarea{
+  resize: none; height: 250px; width: 100%;
+}
+.option-row{
+  padding: 5px 0px;
+}
+.option-row .option-text{
+  width: 100%;
+}
+.option-row .option-radio{
+  float: right;
+}
