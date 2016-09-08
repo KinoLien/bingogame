@@ -29,26 +29,26 @@
 
     <main>
         <div class="row">
-            <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#modalNew">新增題目</button>
+            <button id="btnAddNew" type="button" class="btn btn-primary" data-toggle="modal" data-target="#modalNew">新增題目</button>
             <div class="col-md-10 col-md-offset-1">
-                <% if (questions) { %>
+                <% if (question) { %>
                     <table class="table table-hover table-bordered">
                         <thead>
                             <tr>
                                 <th scope="col" class="manage-column">編號</th>
-                                <th scope="col" class="manage-column">標題</th>
+                                <!-- <th scope="col" class="manage-column">標題</th> -->
                                 <th scope="col" class="manage-column">內容</th>
                                 <th scope="col" class="manage-column">操作</th>
                             </tr>
                         </thead>
                         <tbody>
-                        <% questions.forEach(function(item){ %>
+                        <% question.forEach(function(item){ %>
                             <tr>
                                 <td><%= item.id %></td>
-                                <td><%= item.title %></td>
+                                <!-- <td><%= item.title %></td> -->
                                 <td><%= item.content %></td>
                                 <td>
-                                    <button class="btn btn-success" id="btnEdit-<%= item.id %>" value="<%= item.id %>">編輯</button>
+                                    <!-- <button class="btn btn-success" id="btnEdit-<%= item.id %>" value="<%= item.id %>" data-toggle="modal" data-target="#modalNew">編輯</button> -->
                                     <textarea style="display:none;" id="textData-<%= item.id %>">
                                     <%= JSON.stringify(item) %></textarea>
                                 </td>
@@ -69,7 +69,8 @@
         <div class="modal-dialog modal-lg">
         <!-- Modal content-->
             <div class="modal-content">
-                <form method="post" action="/console/question/add" class="validate"  enctype="multipart/form-data">
+                <form method="post" action="" class="validate" enctype="application/json">
+                <input type="hidden" id="questionID" name="questionID" value="" />
                 <div class="modal-header">
                     <button type="button" class="close" data-dismiss="modal">&times;</button>
                     <h4 class="modal-title">新增/編輯題目</h4>
@@ -127,11 +128,19 @@
             initOptionWidgets({ id: "", content: ""});
         }
 
+        $("#btnAddNew").click(function(){
+            $("#modalNew form").attr("action", "/console/question/add" );
+            $("#modalNew .option-row").remove();
+            $("#questionID").val("");
+            $("#strText").text("");
+            $("#strExplain").text("");
+        });
         $("button[id^=btnEdit-]").click(function(){
             $("#modalNew .option-row").remove();
             var text = $("textarea[id^=textData-" + this.value + "]").text();
             var item = JSON.parse(text);
             initOptionWidgets(item.options);
+            $("#questionID").val(this.value);
             $("#strText").text(item.content);
             $("#strExplain").text(item.explain);
         });

@@ -5,6 +5,7 @@ var express = require('express');
 var _ = require('lodash');
 var uuid = require('node-uuid');
 var path = require('path');
+var service = require('../services/service');
 // var fs = require('fs');
 // var uaparser = require('ua-parser-js');
 // var compiled_app_module_path = path.resolve(__dirname, '../../', 'public', 'assets', 'server.js');
@@ -58,9 +59,21 @@ module.exports = function(app, passport) {
 
   app.get('/console/:type(question|gift)', isLoggedIn, function(req, res, next){
     var type = req.params.type;
-    res.render(path.resolve(__dirname, '../', 'views/console/' + type + '.ejs'));
+    var convertType = type[0].toUpperCase() + type.slice(1);
+    service['get' + convertType]().then(function(results){
+      var data = {};
+      data[type] = results;
+      res.render(path.resolve(__dirname, '../', 'views/console/' + type + '.ejs'), data );
+    });
   });
 
+  // CRUD
+  app.post('/console/:type(question|gift)/:action(add|update)', isLoggedIn, function(req, res, next){
+    var type = req.params.type;
+    var action = req.params.action;
+    convertType = type[0].toUpperCase() + type.slice(1);
+    service[action + convertType](req.body).then(function(){ res.redirect('/console/' + type); });
+  });
 
   // process the login form
   app.post('/console/login', passport.authenticate('local-login', {
@@ -83,7 +96,6 @@ module.exports = function(app, passport) {
     var name = req.params.name;
     res.sendFile(path.resolve(__dirname, '../../client', type, name));
   });
-
 
   // app.get('/clientChangePath/:project', function (req, res, next) {
   //   var project = req.params.project;

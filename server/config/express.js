@@ -19,9 +19,8 @@ module.exports = function (app, passport) {
   // It can be removed safely
   app.disable('x-powered-by');
   app.set('views', path.join(__dirname, '..', 'views'));
-
+  app.set('case sensitive routing', true);
   app.set('view engine', 'ejs');
-
   app.set('view cache', false);
 
   if(isProduction) {
@@ -39,8 +38,8 @@ module.exports = function (app, passport) {
   app.use(flash()); 
 
   app.use(cookieParser());
-  app.use(bodyParser.json());
   app.use(bodyParser.urlencoded({extended: true})); // for parsing application/x-www-form-urlencoded
+  app.use(bodyParser.json());
   app.use(methodOverride());
   app.use(express.static(path.join(__dirname, '../..', 'public')));
  
