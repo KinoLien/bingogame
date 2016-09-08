@@ -2,6 +2,24 @@
 <html lang="en">
 <head>
     <% include partials/head %>
+    <script id="tplOptions" type="text/x-handlebars-template">
+        {{#each options}}
+        <div class="row option-row">
+            <input type="hidden" name="optionID" value="{{ id }}" />
+            <div class="col-md-2">
+                <input type="radio" name="optionCorrect" class="option-radio" value="{{ content }}" />
+            </div>
+            <div class="col-md-8">
+                <input type="text" name="strOption" class="option-text" {{#if answer}}checked="checked"{{/if}} value="{{ content }}" />
+            </div>
+            <div class="col-md-2">
+                <button class="btn btn-danger btn-sm" type="button">
+                    <i class="glyphicon glyphicon-minus"></i>
+                </button>
+            </div>
+        </div>
+        {{/each}}
+    </script>
 </head>
 <body class="container">
 
@@ -12,7 +30,34 @@
     <main>
         <div class="row">
             <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#modalNew">新增題目</button>
-
+            <div class="col-md-10 col-md-offset-1">
+                <% if (questions) { %>
+                    <table class="table table-hover table-bordered">
+                        <thead>
+                            <tr>
+                                <th scope="col" class="manage-column">編號</th>
+                                <th scope="col" class="manage-column">標題</th>
+                                <th scope="col" class="manage-column">內容</th>
+                                <th scope="col" class="manage-column">操作</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                        <% questions.forEach(function(item){ %>
+                            <tr>
+                                <td><%= item.id %></td>
+                                <td><%= item.title %></td>
+                                <td><%= item.content %></td>
+                                <td>
+                                    <button class="btn btn-success" id="btnEdit-<%= item.id %>" value="<%= item.id %>">編輯</button>
+                                    <textarea style="display:none;" id="textData-<%= item.id %>">
+                                    <%= JSON.stringify(item) %></textarea>
+                                </td>
+                            </tr>
+                        <% }) %>
+                        </tbody>
+                    </table>
+                <% } %>
+            </div>
         </div>
     </main>
 
@@ -24,10 +69,10 @@
         <div class="modal-dialog modal-lg">
         <!-- Modal content-->
             <div class="modal-content">
-                <form method="post" action="question/add" class="validate"  enctype="multipart/form-data">
+                <form method="post" action="/console/question/add" class="validate"  enctype="multipart/form-data">
                 <div class="modal-header">
                     <button type="button" class="close" data-dismiss="modal">&times;</button>
-                    <h4 class="modal-title">新增題目</h4>
+                    <h4 class="modal-title">新增/編輯題目</h4>
                 </div>
                 <div class="modal-body">
                     <div class="row">
@@ -43,33 +88,53 @@
                     <div class="row">
                         <div class="col-md-8 col-md-offset-2">
                             <label>答案選項</label>
-                            <div class="row option-row">
-                                <div class="col-md-2">
-                                    <input type="radio" name="optionCorrect" class="option-radio" value="" />
-                                </div>
-                                <div class="col-md-8">
-                                    <input type="text" name="strOption" class="option-text" value="" />
-                                </div>
-                                <div class="col-md-2">
-                                    <button id="btnDelOption" class="btn btn-danger btn-sm" type="button"><i class="glyphicon glyphicon-minus"></i></button>
-                                </div>
-                            </div>
-                            <div class="row">
+                            <div class="row option-add">
                                 <div class="col-md-2 col-md-offset-10">
-                                    <button id="btnAddOption" class="btn btn-success btn-sm" type="button"><i class="glyphicon glyphicon-plus"></i></button>
+                                    <button id="btnAddOption" class="btn btn-success btn-sm" onclick="onAddOption()" type="button"><i class="glyphicon glyphicon-plus"></i></button>
                                 </div>    
                             </div>
-                            
                         </div>
                     </div>
                 </div>
                 <div class="modal-footer">
-                    <button type="submit" class="btn btn-primary">新增</button>
+                    <button type="submit" class="btn btn-primary">儲存</button>
                     <button type="button" class="btn btn-default" data-dismiss="modal">取消</button>
                 </div>
                 </form>
             </div>
         </div>
     </div>
+    <script type="text/javascript">
+        var tplOptions = Handlebars.compile($("#tplOptions").html());
+        function widgetBindEvent(optionRow){
+            var rowLastEl = $(optionRow);
+            var radioEl = rowLastEl.find('input[name="optionCorrect"]');
+            var textEl = rowLastEl.find('input[name="strOption"]');
+            var buttonEl = rowLastEl.find('button');
+            textEl.on('input', function(){ radioEl.val(this.value); });
+            buttonEl.click(function(){ rowLastEl.remove(); });
+        }
+        // { id:String|Number, content:String, anwser:Bool }
+        function initOptionWidgets(o){
+            var isArray = Array.isArray(o);
+            if(!isArray) o = [o];
+            $("#modalNew .option-add").before( tplOptions( { options: o } ) );
+            if(isArray) 
+                $("#modalNew .option-row").each(function(){ widgetBindEvent(this); });
+            else widgetBindEvent("#modalNew .option-row:last");
+        }
+        function onAddOption() {
+            initOptionWidgets({ id: "", content: ""});
+        }
+
+        $("button[id^=btnEdit-]").click(function(){
+            $("#modalNew .option-row").remove();
+            var text = $("textarea[id^=textData-" + this.value + "]").text();
+            var item = JSON.parse(text);
+            initOptionWidgets(item.options);
+            $("#strText").text(item.content);
+            $("#strExplain").text(item.explain);
+        });
+    </script>
 </body>
 </html>
