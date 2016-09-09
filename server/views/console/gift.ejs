@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<!-- id: {type: "increments",  primary: true},
+    type: {type: "string", maxlength: 255},
+    quantity: {type: "integer", unsigned: true, defaultTo: 0},
+    earn_condition: {type: "string", defaultTo: '' }
+     -->
+
+    <% include partials/head %>
+    <script id="tplGifts" type="text/x-handlebars-template">
+        <form method="post" action="{{ action }}" class="form-horizontal" enctype="application/json">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal">&times;</button>
+                <h4 class="modal-title">{{ title }}</h4>
+            </div>
+            <div class="modal-body">
+                <input type="hidden" id="giftID" name="giftID" value="{{ gift.id }}" />
+                <div class="form-group">
+                    <label class="col-sm-3 control-label" for="strType">概述</label>
+                    <div class="col-sm-8">
+                        <input name="strType" class="form-control" id="strType" aria-required="true" value="{{ gift.type }}" />
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="col-sm-3 control-label" for="strQuan">數量</label>
+                    <div class="col-sm-2">
+                        <input name="strQuan" class="form-control" id="strQuan" aria-required="true" value="{{ gift.quantity }}" />
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="col-sm-3 control-label" for="strCondition">多少連線才有</label>
+                    <div class="col-sm-2">
+                        <input name="strCondition" class="form-control" id="strCondition" aria-required="true" value="{{ gift.earn_condition }}" />
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="submit" class="btn btn-primary">儲存</button>
+                <button type="button" class="btn btn-default" data-dismiss="modal">取消</button>
+            </div>
+        </form>
+    </script>
+</head>
+<body class="container">
+
+    <header>
+        <% include partials/header %>
+    </header>
+
+    <main>
+        <div class="row">
+            <div class="col-md-3">
+            <button id="btnAddNew" type="button" class="btn btn-primary" data-toggle="modal" data-target="#modalNew">新增獎品</button>
+            </div>
+            <div class="col-md-12">
+                <% if (gift) { %>
+                    <table class="table table-hover table-bordered">
+                        <thead>
+                            <tr>
+                                <th scope="col" class="manage-column">編號</th>
+                                <th scope="col" class="manage-column">概述</th>
+                                <th scope="col" class="manage-column">數量</th>
+                                <th scope="col" class="manage-column">多少連線才有</th>
+                                <th scope="col" class="manage-column">操作</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                        <% gift.forEach(function(item){ %>
+                            <tr>
+                                <td><%= item.id %></td>
+                                <td><%= item.type %></td>
+                                <td><%= item.quantity %></td>
+                                <td><%= item.earn_condition %></td>
+                                <td>
+                                    <button class="btn btn-success" id="btnEdit-<%= item.id %>" value="<%= item.id %>" data-toggle="modal" data-target="#modalNew">編輯</button>
+                                    <textarea style="display:none;" id="textData-<%= item.id %>">
+                                    <%= JSON.stringify(item) %></textarea>
+                                </td>
+                            </tr>
+                        <% }) %>
+                        </tbody>
+                    </table>
+                <% } %>
+            </div>
+        </div>
+    </main>
+
+    <footer>
+        <% include partials/footer %>
+    </footer>
+
+    <div id="modalNew" class="modal fade" role="dialog">
+        <div class="modal-dialog">
+        <!-- Modal content-->
+            <div class="modal-content">
+            </div>
+        </div>
+    </div>
+    <script type="text/javascript">
+        var previousKeep = "";
+        var tplGifts = Handlebars.compile($("#tplGifts").html());
+        
+        $("#btnAddNew").click(function(){
+            if(previousKeep == "add") return;
+            $("#modalNew .modal-content").html( tplGifts( { 
+                action: "/console/gift/add", 
+                title: "新增獎品",
+                gift: { id:"", type:"", quantity:"", earn_condition:"" }
+            } ) );
+            previousKeep = "add";
+        });
+        $("button[id^=btnEdit-]").click(function(){
+            previousKeep = "edit";
+            var text = $("textarea[id^=textData-" + this.value + "]").text();
+            var item = JSON.parse(text);
+            $("#modalNew .modal-content").html( tplGifts( { 
+                action: "/console/gift/update",
+                title: "更新獎品",
+                gift: item
+            } ) );
+        });
+    </script>
+</body>
+</html>

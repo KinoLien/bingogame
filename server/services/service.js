@@ -12,9 +12,11 @@ var Bookshelf = require("bookshelf")(Knex);
 
 var Questions = require('../models/questions').Questions;
 var Options = require('../models/options').Options;
+var Gifts = require('../models/gifts').Gifts;
 
 var _ = require('lodash');
 
+// call from router
 exports.getQuestion = function(){
   var query = Bookshelf.knex('options')
     .leftJoin('questions', 'questions.id', '=', 'options.q_id')
@@ -41,6 +43,11 @@ exports.getQuestion = function(){
     }
     return res;
   });
+};
+
+// call from router
+exports.getGift = function(){
+  return Bookshelf.knex('gifts').select('*');
 };
 
 exports.addOption = function(opt){
@@ -126,6 +133,38 @@ exports.updateQuestion = function(body){
     Promise.all(promises).then(function(){ resolve(); });
   });
 }
+
+  // strType: 'asdfsadf',
+  // strQuan: '33',
+  // strCondition: '3'
+  // type: {type: "string", maxlength: 255},
+  //   quantity: {type: "integer", unsigned: true, defaultTo: 0},
+  //   earn_condition: {type: "string", defaultTo: '' }
+exports.addGift = function(body){
+  var type = body.strType;
+  var quan = parseInt(body.strQuan) || 0;
+  var cond = body.strCondition;
+  return Gifts.forge().create({ type: type, quantity: quan, earn_condition: cond });
+}
+// { giftID: '1',
+//   strType: 'tesetset1',
+//   strQuan: '3',
+//   strCondition: '2' }
+exports.updateGift = function(body){
+  var id = parseInt(body.giftID);
+  var type = body.strType;
+  var quan = parseInt(body.strQuan) || 0;
+  var cond = body.strCondition;
+  console.log(body);
+  return new Promise(function(resolve, reject){
+    Gifts.forge().query(function(qb){
+      qb.where("id", "=", id);
+    }).fetchOne().then(function(gift){
+      gift.save({ type: type, quantity: quan, earn_condition: cond }).then(function(){ resolve(); });
+    });
+  });
+      
+};
 
 // 我跟對方在同一個domain/path之內，找出已經開的Room，若無則新增，有則回傳舊的Room
 // exports.getRoomByTargetAndMe = function(me, target, domain, path){

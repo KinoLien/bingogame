@@ -40,7 +40,7 @@ body {
 }
 
 .modal textarea{
-  resize: none; height: 250px; width: 100%;
+  resize: none; /*height: 250px; width: 100%;*/
 }
 .option-row{
   padding: 5px 0px;

@@ -7,13 +7,13 @@
         <div class="row option-row">
             <input type="hidden" name="optionID" value="{{ id }}" />
             <div class="col-md-2">
-                <input type="radio" name="optionCorrect" class="option-radio" {{#if is_answer}}checked="checked"{{/if}}value="{{ content }}" />
+                <input type="radio" name="optionCorrect" class="checkbox option-radio" {{#if is_answer}}checked="checked"{{/if}}value="{{ content }}" />
             </div>
             <div class="col-md-8">
-                <input type="text" name="strOption" class="option-text" value="{{ content }}" />
+                <input type="text" name="strOption" class="form-control option-text" value="{{ content }}" />
             </div>
             <div class="col-md-2">
-                <button class="btn btn-danger btn-sm" type="button">
+                <button class="btn btn-danger" type="button">
                     <i class="glyphicon glyphicon-minus"></i>
                 </button>
             </div>
@@ -29,26 +29,28 @@
             <div class="modal-body">
                 <input type="hidden" id="questionID" name="questionID" value="{{ id }}" />
                 <input type="hidden" id="tranRemoveOptions" name="removeOptions" value="" />
-                <div class="row">
+                <div class="form-group">
                     <div class="col-md-6">
                         <label for="strText">題目文字</label>
-                        <textarea name="strText" id="strText" aria-required="true">{{ content }}</textarea>
+                        <textarea name="strText" class="form-control" rows="10" id="strText" aria-required="true">{{ content }}</textarea>
                     </div>
                     <div class="col-md-6">
                         <label for="strExplain">作答後解釋</label>
-                        <textarea name="strExplain" id="strExplain"aria-required="true">{{ explain }}</textarea>
+                        <textarea name="strExplain" class="form-control" rows="10"  id="strExplain"aria-required="true">{{ explain }}</textarea>
                     </div>
                 </div>
-                <div class="row">
-                    <div class="col-md-8 col-md-offset-2">
-                        <label>答案選項</label>
+                <div class="form-group row">
+                    <div class="col-md-2 text-right">
+                        <label class="control-label">答案選項</label>
+                    </div>
+                    <div class="col-md-8">
                         <div class="row">
                             <div class="col-md-2 text-right"> 正解 </div>
                             <div class="col-md-8"> 選項內容 </div>
                         </div>
                         <div class="row option-add">
                             <div class="col-md-2 col-md-offset-10">
-                                <button id="btnAddOption" class="btn btn-success btn-sm" onclick="onAddOption()" type="button"><i class="glyphicon glyphicon-plus"></i></button>
+                                <button id="btnAddOption" class="btn btn-success" onclick="onAddOption()" type="button"><i class="glyphicon glyphicon-plus"></i></button>
                             </div>    
                         </div>
                     </div>
