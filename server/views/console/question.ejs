@@ -7,10 +7,10 @@
         <div class="row option-row">
             <input type="hidden" name="optionID" value="{{ id }}" />
             <div class="col-md-2">
-                <input type="radio" name="optionCorrect" class="option-radio" value="{{ content }}" />
+                <input type="radio" name="optionCorrect" class="option-radio" {{#if is_answer}}checked="checked"{{/if}}value="{{ content }}" />
             </div>
             <div class="col-md-8">
-                <input type="text" name="strOption" class="option-text" {{#if answer}}checked="checked"{{/if}} value="{{ content }}" />
+                <input type="text" name="strOption" class="option-text" value="{{ content }}" />
             </div>
             <div class="col-md-2">
                 <button class="btn btn-danger btn-sm" type="button">
@@ -19,6 +19,46 @@
             </div>
         </div>
         {{/each}}
+    </script>
+    <script id="tplQuestions" type="text/x-handlebars-template">
+        <form method="post" action="{{ action }}" class="validate" enctype="application/json">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal">&times;</button>
+                <h4 class="modal-title">{{ title }}</h4>
+            </div>
+            <div class="modal-body">
+                <input type="hidden" id="questionID" name="questionID" value="{{ id }}" />
+                <input type="hidden" id="tranRemoveOptions" name="removeOptions" value="" />
+                <div class="row">
+                    <div class="col-md-6">
+                        <label for="strText">題目文字</label>
+                        <textarea name="strText" id="strText" aria-required="true">{{ content }}</textarea>
+                    </div>
+                    <div class="col-md-6">
+                        <label for="strExplain">作答後解釋</label>
+                        <textarea name="strExplain" id="strExplain"aria-required="true">{{ explain }}</textarea>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-8 col-md-offset-2">
+                        <label>答案選項</label>
+                        <div class="row">
+                            <div class="col-md-2 text-right"> 正解 </div>
+                            <div class="col-md-8"> 選項內容 </div>
+                        </div>
+                        <div class="row option-add">
+                            <div class="col-md-2 col-md-offset-10">
+                                <button id="btnAddOption" class="btn btn-success btn-sm" onclick="onAddOption()" type="button"><i class="glyphicon glyphicon-plus"></i></button>
+                            </div>    
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="submit" class="btn btn-primary">儲存</button>
+                <button type="button" class="btn btn-default" data-dismiss="modal">取消</button>
+            </div>
+        </form>
     </script>
 </head>
 <body class="container">
@@ -29,8 +69,10 @@
 
     <main>
         <div class="row">
+            <div class="col-md-3">
             <button id="btnAddNew" type="button" class="btn btn-primary" data-toggle="modal" data-target="#modalNew">新增題目</button>
-            <div class="col-md-10 col-md-offset-1">
+            </div>
+            <div class="col-md-12">
                 <% if (question) { %>
                     <table class="table table-hover table-bordered">
                         <thead>
@@ -48,7 +90,7 @@
                                 <!-- <td><%= item.title %></td> -->
                                 <td><%= item.content %></td>
                                 <td>
-                                    <!-- <button class="btn btn-success" id="btnEdit-<%= item.id %>" value="<%= item.id %>" data-toggle="modal" data-target="#modalNew">編輯</button> -->
+                                    <button class="btn btn-success" id="btnEdit-<%= item.id %>" value="<%= item.id %>" data-toggle="modal" data-target="#modalNew">編輯</button>
                                     <textarea style="display:none;" id="textData-<%= item.id %>">
                                     <%= JSON.stringify(item) %></textarea>
                                 </td>
@@ -69,51 +111,29 @@
         <div class="modal-dialog modal-lg">
         <!-- Modal content-->
             <div class="modal-content">
-                <form method="post" action="" class="validate" enctype="application/json">
-                <input type="hidden" id="questionID" name="questionID" value="" />
-                <div class="modal-header">
-                    <button type="button" class="close" data-dismiss="modal">&times;</button>
-                    <h4 class="modal-title">新增/編輯題目</h4>
-                </div>
-                <div class="modal-body">
-                    <div class="row">
-                        <div class="col-md-6">
-                            <label for="strText">題目文字</label>
-                            <textarea name="strText" id="strText" aria-required="true"></textarea>
-                        </div>
-                        <div class="col-md-6">
-                            <label for="strExplain">作答後解釋</label>
-                            <textarea name="strExplain" id="strExplain"aria-required="true"></textarea>
-                        </div>
-                    </div>
-                    <div class="row">
-                        <div class="col-md-8 col-md-offset-2">
-                            <label>答案選項</label>
-                            <div class="row option-add">
-                                <div class="col-md-2 col-md-offset-10">
-                                    <button id="btnAddOption" class="btn btn-success btn-sm" onclick="onAddOption()" type="button"><i class="glyphicon glyphicon-plus"></i></button>
-                                </div>    
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                <div class="modal-footer">
-                    <button type="submit" class="btn btn-primary">儲存</button>
-                    <button type="button" class="btn btn-default" data-dismiss="modal">取消</button>
-                </div>
-                </form>
             </div>
         </div>
     </div>
     <script type="text/javascript">
+        var previousKeep = "";
         var tplOptions = Handlebars.compile($("#tplOptions").html());
+        var tplQuestions = Handlebars.compile($("#tplQuestions").html());
         function widgetBindEvent(optionRow){
+            var tranEl = $("#tranRemoveOptions");
             var rowLastEl = $(optionRow);
             var radioEl = rowLastEl.find('input[name="optionCorrect"]');
             var textEl = rowLastEl.find('input[name="strOption"]');
+            var idEl = rowLastEl.find('input[name="optionID"]');
             var buttonEl = rowLastEl.find('button');
             textEl.on('input', function(){ radioEl.val(this.value); });
-            buttonEl.click(function(){ rowLastEl.remove(); });
+            buttonEl.click(function(){ 
+                var oid = idEl.val();
+                if(oid){
+                    var v = tranEl.val();
+                    tranEl.val( v? (v + "," + oid) : oid );
+                }
+                rowLastEl.remove();
+            });
         }
         // { id:String|Number, content:String, anwser:Bool }
         function initOptionWidgets(o){
@@ -129,20 +149,26 @@
         }
 
         $("#btnAddNew").click(function(){
-            $("#modalNew form").attr("action", "/console/question/add" );
-            $("#modalNew .option-row").remove();
-            $("#questionID").val("");
-            $("#strText").text("");
-            $("#strExplain").text("");
+            if(previousKeep == "add") return;
+            $("#modalNew .modal-content").html( tplQuestions( { 
+                id: "", 
+                action: "/console/question/add", 
+                title: "新增題目", content: "", explain: "" 
+            } ) );
+            previousKeep = "add";
         });
         $("button[id^=btnEdit-]").click(function(){
-            $("#modalNew .option-row").remove();
+            previousKeep = "edit";
             var text = $("textarea[id^=textData-" + this.value + "]").text();
             var item = JSON.parse(text);
+            $("#modalNew .modal-content").html( tplQuestions( { 
+                id: this.value, 
+                action: "/console/question/update",
+                title: "更新題目",
+                content: item.content,
+                explain: item.explain
+            } ) );
             initOptionWidgets(item.options);
-            $("#questionID").val(this.value);
-            $("#strText").text(item.content);
-            $("#strExplain").text(item.explain);
         });
     </script>
 </body>

@@ -43,37 +43,88 @@ exports.getQuestion = function(){
   });
 };
 
+exports.addOption = function(opt){
+  var q_id = opt.q_id;
+  if(!q_id) return;
+  var content = opt.content || "";
+  var is_answer = opt.is_answer === true;
+  return Options.forge().create({ q_id: q_id, content: content, is_answer: is_answer });
+}
+
+exports.updateOption = function(opt){
+  var id = opt.id;
+  if(!id) return;
+  var content = opt.content || "";
+  var is_answer = opt.is_answer === true;
+  return Bookshelf.knex('options')
+    .where('id', '=', id)
+    .update({ content:content, is_answer:is_answer });
+}
+
+// request.body
 exports.addQuestion = function(body){
+  var scope = this;
   return new Promise(function(resolve, reject){
     Questions.forge().create({
       content: body.strText, explain: body.strExplain
     }).then(function(ques){
       var q_id = ques.id;
       var promises = [];
-      _.each(body.strOption, function(item){
-        promises.push(Options.forge().create({
-          q_id: q_id, content: item, is_answer: item == body.optionCorrect
-        }));
+      var ops = Array.isArray(body.strOption)? body.strOption : [body.strOption];
+      _.each(ops, function(item){
+        promises.push(scope.addOption({ q_id: q_id, content: item, is_answer: item == body.optionCorrect }));
       });
       Promise.all(promises).then(function(){ resolve(); });
     });
   });
 };
 
-exports.updateQuestion = function(quesInfo, optInfos){
-  var id = quesInfo.id || "";
-  var content = quesInfo.content || "";
-  var explain = quesInfo.explain || "";
+// { questionID: '2',
+//   removeOptions: '3',
+//   strText: 'yehfyefhyef',
+//   strExplain: 'kasd;fjasd;fjas;dfkljas;dfkjas',
+//   optionID: [ '4', '', '' ],
+//   optionCorrect: 'asdfasdfasf',
+//   strOption: [ 'asdfasdfasf', '1234567', 'dddddddddd' ] }
+// { questionID: '2',
+//   removeOptions: '3,4',
+//   strText: 'yehfyefhyef',
+//   strExplain: 'kasd;fjasd;fjas;dfkljas;dfkjas',
+//   optionID: '',
+//   strOption: 'ddfefefefefefe' }
+// request.body
+exports.updateQuestion = function(body){
+  var id = parseInt(body.questionID);
+  var optid = Array.isArray(body.optionID)? body.optionID : [body.optionID];
+  var opttext = Array.isArray(body.strOption) ? body.strOption : [body.strOption];
+  var removes = body.removeOptions? body.removeOptions.split(',') : [];
+  var adds = [];
+  var updates = [];
+  _.each(optid, function(v, k){ 
+    if(v) updates.push({ id: v, content: opttext[k], is_answer: opttext[k] == body.optionCorrect });
+    else adds.push({ q_id: id, content: opttext[k], is_answer: opttext[k] == body.optionCorrect });
+  });
+  var scope = this;
+  return new Promise(function(resolve, reject){
+    var promises = [];
+    promises.push(
+      Questions.forge().query(function(qb){
+        qb.where("id", "=", id);
+      }).fetchOne().then(function(ques){
+        ques.save({ content: body.strText, explain: body.strExplain });
+      })
+    );
+    // removes
+    promises.push( Bookshelf.knex('options').where('id', 'in', removes).del() );
+    // updates
+    _.each(updates, function(item){ promises.push(scope.updateOption(item)); });
+    // adds
+    _.each(adds, function(item){ promises.push(scope.addOption(item)); });
 
-  // if(id){
-  //   return this.getQuestions().then(function(res){
-  //     if(res && res.length > 0){
+    console.log(body);
 
-  //     }else{
-
-  //     }
-  //   });
-  // }
+    Promise.all(promises).then(function(){ resolve(); });
+  });
 }
 
 // 我跟對方在同一個domain/path之內，找出已經開的Room，若無則新增，有則回傳舊的Room
