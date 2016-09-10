@@ -51,7 +51,7 @@ var Schema = {
     correct: {type: "boolean" , defaultTo: false},
     block_position: {type: "string", maxlength: 64},
     created_at: {type: "dateTime", defaultTo: 'now' }
-  },
+  }
 // question Q (id, text, explain) 
 // option O (id, Q_id, text, is_answer)
 // score S (id, scores, lines, final_blocks) Date
@@ -60,11 +60,11 @@ var Schema = {
 // player P (id, unique_id, S_id, G_id, from, name, address, status) Date
 // status: ‘locked’, ‘fail’, ‘winner’, ‘'
 // log L (id, P_id, Q_id, correct, blok_position) Date
-  session: {
-    sid: {type: "string",  primary: true},
-    sess: {type: "json", nullable: false},
-    expire: {type: "dateTime", nullable: false}
-  }
+  // session: {
+  //   sid: {type: "string",  primary: true},
+  //   sess: {type: "json", nullable: false},
+  //   expire: {type: "dateTime", nullable: false}
+  // }
 };
 
 module.exports = Schema;

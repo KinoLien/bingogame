@@ -24,10 +24,12 @@ module.exports = function (app, passport) {
   app.set('view cache', false);
 
   if(isProduction) {
+    var pgSimpleStore = require('connect-pg-simple')(session);
     app.use(session({
+      store: new pgSimpleStore(),
       secret: 'tuabingoconsole',
-      resave: true,
-      saveUninitialized: false
+      resave: false,
+      cookie: { maxAge: 30 * 24 * 60 * 60 * 1000 } // 30 days
     }));
   }else{
     app.use(session({ secret: 'ilovescotchscotchyscotchscotch' })); // session secret  
