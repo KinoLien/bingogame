@@ -24,9 +24,15 @@ module.exports = function (app, passport) {
   app.set('view cache', false);
 
   if(isProduction) {
+    var pg = require('pg');
+    var Knexfile = require("./knexfile.js");
     var pgSimpleStore = require('connect-pg-simple')(session);
+    var pgInfo = Knexfile.production.connection;
     app.use(session({
-      store: new pgSimpleStore(),
+      store: new pgSimpleStore({
+        pg : pg,                                  // Use global pg-module
+        conString : 'postgres://' + pgInfo.user + ':' + pgInfo.password + '@' + pgInfo.host + ':5432/' + pgInfo.database
+      }),
       secret: 'tuabingoconsole',
       resave: false,
       cookie: { maxAge: 30 * 24 * 60 * 60 * 1000 } // 30 days
