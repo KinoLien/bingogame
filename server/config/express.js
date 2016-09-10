@@ -27,7 +27,7 @@ module.exports = function (app, passport) {
     var pg = require('pg');
     var Knexfile = require("./knexfile.js");
     var pgSimpleStore = require('connect-pg-simple')(session);
-    var pgInfo = Knexfile.production.connection;
+    var pgInfo = Knexfile.connection;
     app.use(session({
       store: new pgSimpleStore({
         pg : pg,                                  // Use global pg-module
