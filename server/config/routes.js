@@ -57,7 +57,7 @@ module.exports = function(app, passport) {
       res.render(path.resolve(__dirname, '../', 'views/console/login.ejs'));
   });
 
-  app.get('/console/:type(question|gift)', isLoggedIn, function(req, res, next){
+  app.get('/console/:type(question|gift|player)', isLoggedIn, function(req, res, next){
     var type = req.params.type;
     var convertType = type[0].toUpperCase() + type.slice(1);
     service['get' + convertType]().then(function(results){

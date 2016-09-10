@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <% include partials/head %>
+</head>
+<body class="container">
+
+    <header>
+        <% include partials/header %>
+    </header>
+
+    <main>
+        <div class="row">
+            <div class="col-md-12">
+                <% if (player) { %>
+                    <table class="table table-hover table-bordered">
+                        <thead>
+                            <tr>
+                                <th scope="col" class="manage-column">識別碼</th>
+                                <th scope="col" class="manage-column">得到</th>
+                                <th scope="col" class="manage-column">達成線數</th>
+                                <th scope="col" class="manage-column">從哪登入</th>
+                                <th scope="col" class="manage-column">狀態</th>
+                                <th scope="col" class="manage-column">名字</th>
+                                <th scope="col" class="manage-column">地址</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                        <% player.forEach(function(item){ %>
+                            <tr>
+                                <td><%= item.unique_id %></td>
+                                <td><%= item.type %></td>
+                                <td><%= item.lines %></td>
+                                <td><%= item.from %></td>
+                                <td><%= item.status %></td>
+                                <td><%= item.name %></td>
+                                <td><%= item.address %></td>
+                            </tr>
+                        <% }) %>
+                        </tbody>
+                    </table>
+                <% } %>
+            </div>
+        </div>
+    </main>
+
+    <footer>
+        <% include partials/footer %>
+    </footer>
+</body>
+</html>

@@ -50,6 +50,13 @@ exports.getGift = function(){
   return Bookshelf.knex('gifts').select('*');
 };
 
+// call from router
+exports.getPlayer = function(){
+  return Bookshelf.knex('players')
+    .leftJoin('gifts', 'players.g_id', '=', 'gifts.id')
+    .select('players.*', 'gifts.type');
+};
+
 exports.addOption = function(opt){
   var q_id = opt.q_id;
   if(!q_id) return;
