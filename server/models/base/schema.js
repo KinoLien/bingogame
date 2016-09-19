@@ -28,7 +28,7 @@ var Schema = {
     id: {type: "increments",  primary: true},
     type: {type: "string", maxlength: 255},
     quantity: {type: "integer", unsigned: true, defaultTo: 0},
-    earn_condition: {type: "string", defaultTo: '' }
+    earn_condition: {type: "integer", unsigned: true, defaultTo: 0 }
   },
 
   players: {
@@ -39,7 +39,7 @@ var Schema = {
     from: {type: "string", maxlength: 255},
     name: {type: "string", maxlength: 255, defaultTo: '' },
     address: {type: "string", defaultTo: '' },
-    status: {type: "string", maxlength: 255, defaultTo: ''},
+    status: {type: "string", maxlength: 255, defaultTo: ''},  // end, playing, locked
     created_at: {type: "dateTime", defaultTo: 'now' },
     updated_at: {type: "dateTime", defaultTo: 'now' }
   },

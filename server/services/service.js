@@ -150,7 +150,7 @@ exports.updateQuestion = function(body){
 exports.addGift = function(body){
   var type = body.strType;
   var quan = parseInt(body.strQuan) || 0;
-  var cond = body.strCondition;
+  var cond = parseInt(body.strCondition) || 0;
   return Gifts.forge().create({ type: type, quantity: quan, earn_condition: cond });
 }
 // { giftID: '1',
