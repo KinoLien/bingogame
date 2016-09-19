@@ -27,6 +27,10 @@ function isLoggedIn(req, res, next) {
 
 module.exports = function(app, passport) {
 
+  app.get('/', function(req, res, next){
+    res.render(path.resolve(__dirname, '../', 'views/bingo/index.ejs'));
+  });
+
   app.get('/console', isLoggedIn, function (req, res, next) {
 
     res.render(path.resolve(__dirname, '../', 'views/console/index.ejs'));
