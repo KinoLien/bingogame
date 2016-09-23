@@ -161,7 +161,7 @@
         });
         $("button[id^=btnEdit-]").click(function(){
             previousKeep = "edit";
-            var text = $("textarea[id^=textData-" + this.value + "]").text();
+            var text = $("#textData-" + this.value).text();
             var item = JSON.parse(text);
             $("#modalNew .modal-content").html( tplQuestions( { 
                 id: this.value, 

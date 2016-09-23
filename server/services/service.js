@@ -18,6 +18,8 @@ var _ = require('lodash');
 exports.getQuestion = function(){
   var query = Bookshelf.knex('options')
     .leftJoin('questions', 'questions.id', '=', 'options.q_id')
+    .groupBy('questions.id', 'o_id')
+    .orderBy('o_id')
     .select('questions.*', 'options.id as o_id', 'options.content as o_content', 'options.is_answer as o_answer');
   return query.then(function(results){
     var res = [];
