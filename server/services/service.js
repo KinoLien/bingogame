@@ -306,6 +306,20 @@ exports.getRandomQuestionExcludes = function(excludes){
 };
 
 exports.getExplainAndCheckAnswer = function(question_id, option_id){
+  if(!option_id || option_id <= 0){
+    // return only explain, and always correct:false
+    return Bookshelf.knex('questions')
+      .where('id', question_id)
+      .select('explain')
+      .then(function(results){
+        if(results && results.length > 0){
+          return { explain: results[0].explain, correct: false };
+        }else{
+          return { explain: "", correct: false };
+        }
+      });
+  }
+
   var query = Bookshelf.knex('options')
     .leftJoin('questions', 'questions.id', '=', 'options.q_id')
     .where('questions.id', question_id)

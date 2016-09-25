@@ -2,6 +2,25 @@
 <html lang="en">
 <head>
     <% include partials/head %>
+    <script id="gameBlocks" type="text/x-handlebars-template">
+        <table style="text-align:center; width: 200px; table-layout: fixed; border-spacing: 0px;">
+            <tbody>
+                {{#each blocks}}
+                <tr>
+                    {{#each this}}
+                    {{#if (is_status this 1)}}
+                        <td style="background: #b7efab;">{{ this }}</td>
+                    {{else if (is_status this -1)}}
+                        <td style="background: #ececec;">{{ this }}</td>
+                    {{else}}
+                        <td>{{ this }}</td>
+                    {{/if}}
+                    {{/each}}
+                </tr>
+                {{/each}}
+            </tbody>
+        </table>
+    </script>
 </head>
 <body class="container">
 
@@ -9,6 +28,8 @@
     <fb:login-button scope="public_profile,email" size="large" auto_logout_link="true" onlogin="checkLoginState();">
     </fb:login-button>
 </div>
-
+<div id="blockRegion" class="row"></div>
+<div style="color:red;">Game Screen Default hidden</div>
+<div class="row" id="logRegion" style="overflow:auto; height: 450px; border:2px solid #ececec;"></div>
 </body>
 </html>

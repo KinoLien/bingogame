@@ -3,7 +3,9 @@ var service = require('../services/service');
 
 var _ = require('lodash');
 
-var idToGameStatus = {};
+var idToGameStatus = {
+  "FB" : {}, "G" : {}
+};
 
 // 用排程去 check 這個人是不是中間斷線之後過了三天都沒回來繼續，是的話直接視為fail
 var rules = {
@@ -43,13 +45,14 @@ function validRules(next){
 
 function getNextValidBlock() {
   var blocks = this.blocks;
-  var i = 0, j = 0, len = blocks.length;
+  var len = blocks.length;
   var res = [];
-  for(; i < len; i ++){
-    for(; j < len; j++){
+  for(var i = 0; i < len; i ++){
+    for(var j = 0; j < len; j++){
       if(blocks[i][j] == 0) res.push([i,j]);
     }
   }
+  console.log(res);
   if(res.length){
     var xy = _.sample(res);
     return { x: xy[0], y: xy[1] };
@@ -95,23 +98,33 @@ module.exports = function (socket, io) {
 
   var gameStatus = {};
 
+  socket._cacheEmit = socket.emit;
+  socket.emit = function(){
+    console.log(gameStatus);
+    socket._cacheEmit.apply(this, arguments);
+  };
+
   socket.on('req_start', function(message){
     // cache the socket.unique_id
-    var id = socket.unique_id = message.unique_id;
+    var id = socket.unique_id;
+    var strFrom = message.loginFrom || "FB";
 
-    gameStatus = idToGameStatus[id] = {
+    if(!idToGameStatus[strFrom]) return;
+    gameStatus = idToGameStatus[strFrom][id] = {
       id: id,
       player_id: 0,
       maxlines: 0,
+      from: strFrom,
       status: 'playing',
       answeredQues: [],
+      currentPickQues: 0,
       currentEarn: '',
       currentAction: 'start',
       currentBlock: null,       // ex: { x:0, y:1 }
       blocks: Create2DArray(5)  // values: -1, 0, 1
     };
     // load answerlogs and status from DB if the player is exist.
-    service.getOrCreatePlayer(id, message.loginFrom || "FB").then(function(res){
+    service.getOrCreatePlayer(id, strFrom).then(function(res){
       if(res){
         // player db id
         gameStatus.player_id = res.id;
@@ -132,14 +145,15 @@ module.exports = function (socket, io) {
           case "end":
             gameStatus.currentAction = "end";
             break;
-          case "playing":
-            gameStatus.currentAction = "answer_question";
-            break;
           case "locked":
             gameStatus.currentAction = "check_gift";
             break;
+          case "playing":
+          default:
+            gameStatus.currentAction = "answer_question";
+            break;
         }
-        
+        // console.log(gameStatus);
         socket.emit('res_start', { status: gameStatus.status, allBlocks: gameStatus.blocks });
       }
     });
@@ -153,25 +167,28 @@ module.exports = function (socket, io) {
 
     data.block = xy;
     data.allBlocks = allBlocks;
+    data.navigate = "answer_question";
 
     if(xy) gameStatus.currentBlock = xy;
     if(validRules.call(gameStatus, 'next_block_question')){
       service.getRandomQuestionExcludes(gameStatus.answeredQues).then(function(res){
         data.question = res;
+        gameStatus.currentPickQues = res.id;
         socket.emit('res_next_block_question', data);
       });
     }
   });
 
-  // id, answer_id, block
+  // answer_id
   socket.on('req_answer_question', function(message){
     if(!gameStatus.id) return;
     var data = {};
-    var id = message.id;
+    var id = gameStatus.currentPickQues;
     var answer_id = message.answer_id;
     
     data.id = id;
     data.block = gameStatus.currentBlock;
+    data.navigate = "check_blocks";
     if(validRules.call(gameStatus, 'answer_question')){
       service.getExplainAndCheckAnswer(id, answer_id).then(function(res){
         // id, block, correct:boolean
@@ -185,36 +202,43 @@ module.exports = function (socket, io) {
         data.player_id = gameStatus.player_id;
         
         // add answer log
+        console.log("before answer_question add answer log");
         service.addAnswerlog(data);
       });
     }
+    gameStatus.currentPickQues = 0;
     gameStatus.currentBlock = null;
   });
 
   // return has empty block? have any lines?
-  socket.on('req_check_blocks', function(message){
+  socket.on('req_check_blocks', function(){
     if(!gameStatus.id) return;
 
     if(validRules.call(gameStatus, 'check_blocks')){
       var lines = getBlockLines.call(gameStatus); // array
       var emptyBlock = getNextValidBlock.call(gameStatus);  // object: xy
       var hasEmpty = emptyBlock !== false;
+      var linesChanged = gameStatus.maxlines != lines.length;
+      var data = {};
+
       // update cache gamestatus
       gameStatus.maxlines = Math.max(gameStatus.maxlines, lines.length);
       gameStatus.status = "playing";
 
-      // if(lines.length && !hasEmpty){
-      //   // to the end but should check the gift (force)
-      //   gamestatus.status = "locked";
-      // }else if(!lines.length && !hasEmpty){
-      //   gameStatus.status = "end";
-      // }else{
-      //   gameStatus.status = "playing";
-      // }
+      var navigate = "";
+      if(linesChanged || (lines.length && !hasEmpty) ){
+        // to the end but should check the gift (force)
+        navigate = "check_gift";
+      }else if(!lines.length && !hasEmpty){
+        navigate = "end";
+      }else{
+        navigate = "next_block_question";
+      }
 
       data.lines = lines;
       data.allBlocks = gameStatus.blocks;
       data.hasEmpty = hasEmpty;
+      data.navigate = navigate;
 
       // update player info about: lines, status
       service.updatePlayer({ 
@@ -300,7 +324,17 @@ module.exports = function (socket, io) {
   socket.on('disconnect', function (message) {
     // clean cache  
     if(socket.unique_id){
-      delete idToGameStatus[socket.unique_id];
+      // means user give up answer the question, or user lose his connection.
+      if(gameStatus.currentAction == "next_block_question"){
+        service.addAnswerlog({
+          id: gameStatus.currentPickQues,
+          player_id: gameStatus.player_id,
+          correct: false,
+          block: gameStatus.currentBlock
+        });
+      }
+
+      delete idToGameStatus[gameStatus.from][socket.unique_id];
     }
   });
 

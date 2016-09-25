@@ -3,7 +3,7 @@ var Bookshelf = require('./base');
 
 var Answerlog = Bookshelf.Model.extend({
   tableName: "answerlogs",
-  hasTimestamps : true,
+  // hasTimestamps : true,
 
   // domain: function () {
   //   // one-to-one or many-to-one

@@ -39,18 +39,20 @@ module.exports = {
       //   "from_domain": fromDomain
       // };
 
-      socket.userid = params["_rtUserId"];
-      socket.userimage = params["_rtUserImage"];
-      socket.username = params["_rtUserName"];
-      socket.usermail = params["_rtUserMail"];
-      socket.usershowpath = params["_rtUserShowPath"];
-      socket.userislogin = (params["_rtUserIsLogin"] === 'true') ? true : false;
-      socket.userrole = params["_rtUserRole"];
+      socket.unique_id = params["uid"];
+      // socket.userimage = params["_rtUserImage"];
+      // socket.username = params["_rtUserName"];
+      // socket.usermail = params["_rtUserMail"];
+      // socket.usershowpath = params["_rtUserShowPath"];
+      // socket.userislogin = (params["_rtUserIsLogin"] === 'true') ? true : false;
+      // socket.userrole = params["_rtUserRole"];
 
-      socket.currentDomain = params["_rtDom"];
-      socket.currentPath = params["_rtPath"];
-      socket.currentParam = params["_rtParam"];
-      socket.currentHash = params["_rtHash"];
+      // socket.currentDomain = params["_rtDom"];
+      // socket.currentPath = params["_rtPath"];
+      // socket.currentParam = params["_rtParam"];
+      // socket.currentHash = params["_rtHash"];
+
+      //console.log(socket.unique_id);
 
       next();
     });
