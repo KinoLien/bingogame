@@ -242,7 +242,7 @@ exports.earnGiftAndUpdatePlayer = function(opts){
     return _.map(res, function(item){ return item.id; });
   }).then(function(ids){
     return Bookshelf.knex('gifts')
-      .where('earn_condition', '>=', lines)
+      .where('earn_condition', '<=', lines)
       .andWhere('id', 'in', ids)
       .orderBy('earn_condition', 'desc')
       .select('*');
@@ -262,16 +262,20 @@ exports.earnGiftAndUpdatePlayer = function(opts){
 };
 
 exports.getRemainGifts = function(){
-  return Bookshelf.knex('players')
-    .leftJoin('gifts', 'players.g_id', '=', 'gifts.id')
-    .where('players.g_id', '>', 0)
-    .groupBy('players.g_id')
-    .select(Bookshelf.knex.raw('count(*) as gift_count, g_id, quantity'))
+  var knex = Bookshelf.knex;
+  var query = knex('gifts')
+    .leftJoin(
+      knex('players').where('g_id', '>', 0).count('g_id as count').select('g_id').groupBy('g_id').as('gm'),
+      'gifts.id', '=', 'gm.g_id')
+    .select('*');
+  console.log(query);
+  return query
     .then(function(results){
       var remains = [];
       _.each(results, function(item){
-        if(item.gift_count < item.quantity){
-          remains.push( { id: item.g_id, count: item.quantity - item.gift_count } );
+        var count = item.count || 0;
+        if(count < item.quantity){
+          remains.push( { id: item.id, count: item.quantity - count } );
         }
       });
       return remains;
@@ -282,6 +286,7 @@ exports.getRandomQuestionExcludes = function(excludes){
   var query = Bookshelf.knex('options')
     .leftJoin('questions', 'questions.id', '=', 'options.q_id')
     .whereNotIn('questions.id', excludes)
+    .orderBy('options.id')
     .select('questions.id', 'questions.content', 'options.id as o_id', 'options.content as o_content');
   return query.then(function(results){
     var res = [];

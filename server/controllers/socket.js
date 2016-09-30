@@ -61,14 +61,6 @@ function getNextValidBlock() {
   }
 }
 
-function markAnswered(correct){
-  var blocks = this.blocks;
-  var current = this.currentBlock;
-  if(current){
-    blocks[current.x][current.y] = (!!correct)? 1 : -1;
-  }
-}
-
 function getBlockLines(){
   var blocks = this.blocks;
   var ltTorbLine = true;
@@ -108,6 +100,7 @@ module.exports = function (socket, io) {
     // cache the socket.unique_id
     var id = socket.unique_id;
     var strFrom = message.loginFrom || "FB";
+    var navigate;
 
     if(!idToGameStatus[strFrom]) return;
     gameStatus = idToGameStatus[strFrom][id] = {
@@ -147,14 +140,16 @@ module.exports = function (socket, io) {
             break;
           case "locked":
             gameStatus.currentAction = "check_gift";
+            navigate = "end";
             break;
           case "playing":
           default:
             gameStatus.currentAction = "answer_question";
+            navigate = "check_blocks";
             break;
         }
         // console.log(gameStatus);
-        socket.emit('res_start', { status: gameStatus.status, allBlocks: gameStatus.blocks });
+        socket.emit('res_start', { status: gameStatus.status, allBlocks: gameStatus.blocks, navigate: navigate });
       }
     });
   });
@@ -195,8 +190,10 @@ module.exports = function (socket, io) {
         data.correct = res.correct;
         data.explain = res.explain;
         
-        markAnswered.call(gameStatus, res.correct);
-
+        // mark answered
+        var current = data.block;
+        gameStatus.blocks[current.x][current.y] = (!!res.correct)? 1 : -1;
+        
         socket.emit('res_answer_question', data);
 
         data.player_id = gameStatus.player_id;
@@ -226,14 +223,24 @@ module.exports = function (socket, io) {
       gameStatus.status = "playing";
 
       var navigate = "";
-      if(linesChanged || (lines.length && !hasEmpty) ){
+
+      if(linesChanged){
         // to the end but should check the gift (force)
         navigate = "check_gift";
-      }else if(!lines.length && !hasEmpty){
-        navigate = "end";
-      }else{
+      }else if(hasEmpty){
         navigate = "next_block_question";
+      }else{
+        navigate = "end";
       }
+      
+      // if(linesChanged || (lines.length && !hasEmpty) ){
+      //   // to the end but should check the gift (force)
+      //   navigate = "check_gift";
+      // }else if(!lines.length && !hasEmpty){
+      //   navigate = "end";
+      // }else{
+      //   navigate = "next_block_question";
+      // }
 
       data.lines = lines;
       data.allBlocks = gameStatus.blocks;
@@ -266,8 +273,11 @@ module.exports = function (socket, io) {
           gameStatus.currentEarn = res.type;
           data.hasGift = true;  
           data.giftContent = res.type;
+          data.navigate = "end";
         }else{
-          data.hasGift = false;  
+          gameStatus.currentAction = "answer_question";
+          data.hasGift = false; 
+          data.navigate = "check_blocks"; 
         }
         
         // return
@@ -280,7 +290,7 @@ module.exports = function (socket, io) {
   socket.on('req_end', function(message){
     if(!gameStatus.id) return;
     if(validRules.call(gameStatus, 'end')){
-      var toEnd = false;
+      var navigate;
       if(gameStatus.currentEarn){
         // to end
         if(!_.isEmpty(message.name) && !_.isEmpty(message.address)){
@@ -299,7 +309,8 @@ module.exports = function (socket, io) {
           // as continue
           // make the status to playing
           gameStatus.status = "playing";
-          gameStatus.currentAction = "check_blocks";
+          gameStatus.currentAction = "answer_question";
+          navigate = "check_blocks";
           service.updatePlayer({
             id: gameStatus.player_id,
             status: "playing"
@@ -317,7 +328,7 @@ module.exports = function (socket, io) {
       }
 
       // { toEnd: Boolean }
-      socket.emit('res_end', { toEnd: toEnd } );  
+      socket.emit('res_end', { toEnd: !navigate, navigate: navigate } );  
     }
   });
 

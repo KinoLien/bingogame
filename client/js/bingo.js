@@ -93,28 +93,29 @@ function init_socket(uid){
         log("Game Screen Show");
         // $("#blockRegion").html( gameBlocks( { blocks: data.allBlocks } ) );
         var status = data.status;
-        log("current status: " + data.status);
+        log("current status: " + status);
         log("output current score lines and earns");
-        next(function(){
-            switch(status){
-                case "end":
-                    socketInstance.emit('req_end', {});
-                    break;
-                case "locked":
-                    var items = [0, 1];
-                    if(randomItem(items)){
-                        var stamp = (new Date()).getTime();
-                        socketInstance.emit('req_end', { name: "testname-" + stamp, address: "testaddress-" + stamp});
-                    }else{
-                        socketInstance.emit('req_check_blocks');
-                    }
-                    break;
-                case "playing":
-                default:
-                    socketInstance.emit('req_check_blocks');
-                    break;
-            }    
-        });
+        switch(status){
+            case "end":
+                log("You can not play anymore.");
+                break;
+            case "locked":
+                log("=== Enter name and address OR continue ===");
+                next(function(){
+                    var stamp = (new Date()).getTime();
+                    var items = [
+                        {}, { name: "testname-" + stamp, address: "testaddress-" + stamp }
+                    ];
+                    socketInstance.emit('req_' + data.navigate, randomItem(items) );
+                });
+                break;
+            case "playing":
+            default:
+                next(function(){
+                    socketInstance.emit('req_' + data.navigate, {});
+                });
+                break;
+        }
     });
 
     // data.lines
@@ -128,6 +129,7 @@ function init_socket(uid){
 
         // next_block_question, check_gift, end
         if(task){
+            log("To Do action: " + task);
             if(task == "next_block_question"){
                 log("Do Block choose animation");
                 blockAnimate.start();
@@ -198,9 +200,45 @@ function init_socket(uid){
 
         $("#blockRegion tr:nth-child(" + (xy.x+1) + ") td:nth-child(" + (xy.y+1) + ")").css("background", color).text(text);
 
-        // socketInstance.emit('req_' + data.navigate, {});
+        next(function(){
+            socketInstance.emit('req_' + data.navigate, {});
+        });
     });
 
+    // data.hasGift
+    // data.giftContent
+    // data.navigate
+    socketInstance.on('res_check_gift', function(data){
+        if(data.hasGift){
+            log("You Earned: " + data.giftContent);
+            log("=== Enter name and address OR continue ===");
+            next(function(){
+                var stamp = (new Date()).getTime();
+                var items = [
+                    {}, { name: "testname-" + stamp, address: "testaddress-" + stamp }
+                ];
+                socketInstance.emit('req_' + data.navigate, randomItem(items) );
+            });
+        }else{
+            log("No new gift");
+            next(function(){
+                socketInstance.emit('req_' + data.navigate, {});
+            });
+        }
+    });
+
+    // data.toEnd
+    // data.navigate
+    socketInstance.on('res_end', function(data){
+        if(data.toEnd){
+            log("=== THE END ===");
+        }else{
+            log("Continue to play");
+            next(function(){
+                socketInstance.emit('req_' + data.navigate, {});
+            });
+        }
+    });
 
     socketInstance.on('disconnect', function(){
         log("--- disconnect --- should refresh page");
