@@ -22,14 +22,77 @@
         </table>
     </script>
 </head>
-<body class="container">
 
-<div class="row">
+<body>
+
+<!-- <div class="row">
     <fb:login-button scope="public_profile,email" size="large" auto_logout_link="true" onlogin="checkLoginState();">
     </fb:login-button>
 </div>
 <div id="blockRegion" class="row"></div>
 <div style="color:red;">Game Screen Default hidden</div>
-<div class="row" id="logRegion" style="overflow:auto; height: 450px; border:2px solid #ececec;"></div>
+<div class="row" id="logRegion" style="overflow:auto; height: 450px; border:2px solid #ececec;"></div> -->
+
+<section class="gameBox">
+    <div class="ContentsBox clearfix">
+        <div class="leftBox25">
+            <div class="loginBeforeBox" style="display: none;">
+                <h1 class="gameName">遊戲名稱</h1>
+                <p class="note">請先登入才可以開始遊戲喔</p>
+                <p class="loginBox">
+                    <a class="fb" href="#" onclick="fb_login();">Facebook登入</a>
+                    <!-- <a class="google" href="#">Gmail登入</a> -->
+                </p>
+            </div>
+            <div class="loginAfterBox" style="display: none;">
+                <p class="topic">题目</p>
+                <div class="gridBox">
+                    <ul class="clearfix">
+                        <li><p class="p1 this">Q1</p></li><!-- 選中此題目吃this，會出現光暈和兩條線 -->
+                        <li><p>Q2</p></li>
+                        <li><p>Q3</p></li>
+                        <li><p>Q4</p></li>
+                        <li><p class="random">Q5</p></li><!-- 跑動畫隨機時吃"random" -->
+                        <li><p class="yes">Q6</p></li><!-- 答對吃yes -->
+                        <li><p class="no">Q7</p></li><!-- 答錯吃no -->
+                        <li><p>Q8</p></li>
+                        <li><p class="p9">Q9</p></li>
+                        <li><p class="p10">Q10</p></li>
+                        <li><p>Q11</p></li>
+                        <li><p class="yes">Q12</p></li>
+                        <li><p>Q13</p></li>
+                        <li><p class="p14">Q14</p></li>
+                        <li><p class="p15">Q15</p></li>
+                        <li><p>Q16</p></li>
+                        <li><p>Q17</p></li>
+                        <li><p>Q18</p></li>
+                        <li><p class="p19">Q19</p></li>
+                        <li><p class="p20">Q20</p></li>
+                        <li><p class="p21">Q21</p></li>
+                        <li><p class="yes">Q22</p></li>
+                        <li><p>Q23</p></li>
+                        <li><p class="p24">Q24</p></li>
+                        <li><p class="p25">Q25</p></li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+        <div class="GameExplanation">
+            <div class="userBox"><p style="display: none;">Hi <span id="strUserName">Kino</span>, 您好</p></div>
+            <p class="title_ex">遊戲說明</p>
+            <p class="game_title t01">基本規則</p>
+            <p class="game_info">用滑鼠左鍵點擊方塊，將2個圖案相同的方塊用連線連接起來，連接線不多於3根直線，連接後方塊就會爆炸。</p>
+            <p class="game_title t02">操作規則</p>
+            <p class="game_info">選擇一個棋子用滑鼠左鍵點擊，棋子會變色，然後點擊另一個同樣牌面圖案的棋子，如果能夠連線就OK了，如果不能連線，第一次選擇的棋子就會失效，要趕緊重新尋找喲。</p>
+            <p class="btnStart"><a>開始作答 >></a></p>
+        </div>
+    </div>
+    
+</section>
+<footer class="footerBox">
+    <p class="Copyright">Copyright © TUA 台灣泌尿科醫學會<br/>
+    Powered by Chung-You Tsai M.D. All rights reserved.</p>
+</footer>
+
 </body>
 </html>

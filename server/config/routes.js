@@ -95,7 +95,7 @@ module.exports = function(app, passport) {
   });
 
 
-  app.get('/client/:type(css|js)/:name', function(req, res, next) {
+  app.get('/client/:type(css|js|images)/:name', function(req, res, next) {
     var type = req.params.type;
     var name = req.params.name;
     res.sendFile(path.resolve(__dirname, '../../client', type, name));

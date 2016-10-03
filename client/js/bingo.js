@@ -1,20 +1,42 @@
 
-function log(msg){ $("#logRegion").append('<div>' + msg + '</div>'); }
+function log(msg){ 
+    // $("#logRegion").append('<div>' + msg + '</div>');
+    console.log(msg);
+}
 function logCount(second){ 
-    var countId = 'logCount';
-    var countEl = document.getElementById(countId);
+    // var countId = 'logCount';
+    // var countEl = document.getElementById(countId);
     
-    if(!countEl) $("#logRegion").append('<div id="' + countId + '"></div>');
+    // if(!countEl) $("#logRegion").append('<div id="' + countId + '"></div>');
 
-    var countJQ = $("#" + countId);
+    // var countJQ = $("#" + countId);
 
-    if(second == -1) countJQ.remove();
-    else countJQ.text(second);
+    // if(second == -1) countJQ.remove();
+    // else countJQ.text(second);
 };
 
 function randomItem(items){
     return items[Math.floor(Math.random() * items.length)];
 }
+
+(function(scope){
+    function gameState(){}
+
+    gameState.beforeLogin = function(){
+        $(".loginBeforeBox").show();
+        $(".loginAfterBox").hide();
+        $(".userBox p").hide();
+    };
+
+    gameState.afterLogin = function(profile){
+        $(".loginBeforeBox").hide();
+        $(".loginAfterBox").show(); 
+        $(".userBox p").show();
+        $("#strUserName").text(profile.name);
+    };
+
+    scope.gameState = gameState;
+})(window);
 
 (function(scope){
 
@@ -29,9 +51,9 @@ function randomItem(items){
             var target = $(document.body);
             var pattern = "0123456789abcdef";
             _animateInt = setInterval(function(){
-                var c = "#";
-                for(var i = 6; i--; ) c += randomItem(pattern);
-                target.css("background", c);
+                // var c = "";
+                // for(var i = 2; i--; ) c += randomItem(pattern);
+                // target.css("background", "#" + [c,c,c].join(''));
             }, 100);
             _startStamp = (new Date()).getTime();
             _isAnimating = true;
@@ -63,6 +85,8 @@ function randomItem(items){
 })(window);
 
 var socketInstance = null;
+var currentName = "";
+var currentEmail = "";
 
 function init_socket(uid){
     Handlebars.registerHelper('is_status', function(val, num, opts) {
@@ -73,8 +97,8 @@ function init_socket(uid){
     var gameBlocks = Handlebars.compile($("#gameBlocks").html());
 
     var next = function(fn){ 
-        log("=== Next Task Wait for 3 seconds ===");
-        return setTimeout(fn, 3000);
+        log("=== Next Task Wait for 1 seconds ===");
+        return setTimeout(fn, 1000);
     };
 
     log("Socket connecting...");
@@ -145,12 +169,12 @@ function init_socket(uid){
     socketInstance.on('res_next_block_question', function(data){
         log("res Next block call back");
         log("Wait for animation stop");
-        blockAnimate.stop(4, function(){
+        blockAnimate.stop(1, function(){
             var task = data.navigate;
             var xy = data.block;
             var start = (new Date()).getTime();
             var intervals = [];
-            var testSecondsList = [3,5,6,9,11];
+            var testSecondsList = [1,1];
             var testInterval = null;
 
             var doEmit = function(answerid){
@@ -176,7 +200,9 @@ function init_socket(uid){
 
             testInterval = setTimeout((function(question){
                 return function(){
-                    var randomAnswer = randomItem(question.options);
+                    var options = question.options;
+                    var randomAnswer = options[options.length-1];
+                    // var randomAnswer = randomItem(options.slice(2));
                     log("Answer Question: " + question.id);
                     log("answer_id: " + randomAnswer.id );
                     doEmit(randomAnswer.id);
@@ -248,7 +274,7 @@ function init_socket(uid){
 window.fbAsyncInit = function() {
     FB.init({
       appId      : '1264295200261116',
-      cookie     : true,
+      // cookie     : true,
       status     : true,
       xfbml      : true,
       version    : 'v2.7'
@@ -277,13 +303,21 @@ function statusChangeCallback(response) {
         log('logged');
         log("Initialize Socket");
         // log(JSON.stringify(response));
-        init_socket(response.authResponse.userID);
+        var userID = response.authResponse.userID;
+        FB.api('/me', function(res){
+            currentEmail = res.email; 
+            currentName = res.name;
+            gameState.afterLogin({name:currentName});
+            // init_socket(userID);
+        });
+        
     } else if (response.status === 'not_authorized') {
       // The person is logged into Facebook, but not your app.
       // document.getElementById('status').innerHTML = 'Please log ' +
       //   'into this app.';
         log('have to login');
         if(socketInstance) socketInstance.disconnect();
+        gameState.beforeLogin();
     } else {
       // The person is not logged into Facebook, so we're not sure if
       // they are logged into this app or not.
@@ -291,6 +325,7 @@ function statusChangeCallback(response) {
       //   'into Facebook.';
         log('have to login');
         if(socketInstance) socketInstance.disconnect();
+        gameState.beforeLogin();
     }
 }
 
@@ -298,6 +333,32 @@ function checkLoginState() {
     FB.getLoginStatus(function(response) {
         statusChangeCallback(response);
     });
+}
+
+function fb_login(){
+    FB.login(statusChangeCallback, { scope: 'public_profile,email' });
+
+    // FB.login(function(response) {
+
+    //     if (response.authResponse) {
+    //         console.log('Welcome!  Fetching your information.... ');
+    //         //console.log(response); // dump complete info
+    //         access_token = response.authResponse.accessToken; //get access token
+    //         user_id = response.authResponse.userID; //get FB UID
+
+    //         FB.api('/me', function(response) {
+    //             user_email = response.email; //get user email
+    //       // you can store this data into your database             
+    //         });
+
+    //     } else {
+    //         //user hit cancel button
+    //         console.log('User cancelled login or did not fully authorize.');
+
+    //     }
+    // }, {
+    //     scope: 'public_profile,email'
+    // });
 }
 
 // for the test
