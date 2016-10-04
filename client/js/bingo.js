@@ -22,6 +22,22 @@ function randomItem(items){
 (function(scope){
     function gameState(){}
 
+    Handlebars.registerHelper('is_status', function(val, num, opts) {
+        if(val == num) return true;
+        else return false;
+    });
+    Handlebars.registerHelper("counter", function (index){
+        return index + 1;
+    });
+
+    var gameBlocks = Handlebars.compile(
+        '<ul class="clearfix">\
+            {{#each blocks}}\
+            <li><p class="p{{counter @index}} {{#if (is_status this 1)}}yes{{else if (is_status this -1)}}no{{else}}empty{{/if}}">Q{{counter @index}}</p></li>\
+            {{/each}}\
+        </ul>'
+    );
+
     gameState.beforeLogin = function(){
         $(".loginBeforeBox").show();
         $(".loginAfterBox").hide();
@@ -33,6 +49,20 @@ function randomItem(items){
         $(".loginAfterBox").show(); 
         $(".userBox p").show();
         $("#strUserName").text(profile.name);
+    };
+
+    gameState.refreshBlocks = function(blocks){
+        var convertedBlocks = [];
+        blocks.forEach(function(item){
+            convertedBlocks = convertedBlocks.concat(item);
+        });
+        $(".gridBox").html( gameBlocks( { blocks: convertedBlocks } ) );
+    };
+
+    gameState.markAnswer = function(x, y, correct){
+        var idx = x * 5 + (y + 1);
+        var jqBlock = $(".gridBox li:nth-child(" + idx + ") p");
+        jqBlock.removeClass("empty").addClass(correct? "yes" : "no");
     };
 
     scope.gameState = gameState;
@@ -89,13 +119,6 @@ var currentName = "";
 var currentEmail = "";
 
 function init_socket(uid){
-    Handlebars.registerHelper('is_status', function(val, num, opts) {
-        if(val == num) return true;
-        else return false;
-    });
-
-    var gameBlocks = Handlebars.compile($("#gameBlocks").html());
-
     var next = function(fn){ 
         log("=== Next Task Wait for 1 seconds ===");
         return setTimeout(fn, 1000);
@@ -115,7 +138,8 @@ function init_socket(uid){
     //////////////////////////
     socketInstance.on('res_start', function(data){
         log("Game Screen Show");
-        // $("#blockRegion").html( gameBlocks( { blocks: data.allBlocks } ) );
+        gameState.refreshBlocks(data.allBlocks);
+        
         var status = data.status;
         log("current status: " + status);
         log("output current score lines and earns");
@@ -147,8 +171,8 @@ function init_socket(uid){
     // data.hasEmpty
     socketInstance.on('res_check_blocks', function(data){
         log("Update Blocks Info");
-        $("#blockRegion").html( gameBlocks( { blocks: data.allBlocks } ) );
-
+        gameState.refreshBlocks(data.allBlocks);
+        
         var task = data.navigate;
 
         // next_block_question, check_gift, end
@@ -220,11 +244,9 @@ function init_socket(uid){
         log("Answer is " + (data.correct? "correct" : "fail") );
         log("Show Explain: " + data.explain);
 
-        var color = data.correct? "#b7efab" : "#ececec";
-        var text = data.correct? "1" : "-1";
         var xy = data.block;
 
-        $("#blockRegion tr:nth-child(" + (xy.x+1) + ") td:nth-child(" + (xy.y+1) + ")").css("background", color).text(text);
+        gameState.markAnswer(xy.x, xy.y, data.correct);
 
         next(function(){
             socketInstance.emit('req_' + data.navigate, {});

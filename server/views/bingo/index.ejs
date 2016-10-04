@@ -2,25 +2,6 @@
 <html lang="en">
 <head>
     <% include partials/head %>
-    <script id="gameBlocks" type="text/x-handlebars-template">
-        <table style="text-align:center; width: 200px; table-layout: fixed; border-spacing: 0px;">
-            <tbody>
-                {{#each blocks}}
-                <tr>
-                    {{#each this}}
-                    {{#if (is_status this 1)}}
-                        <td style="background: #b7efab;">{{ this }}</td>
-                    {{else if (is_status this -1)}}
-                        <td style="background: #ececec;">{{ this }}</td>
-                    {{else}}
-                        <td>{{ this }}</td>
-                    {{/if}}
-                    {{/each}}
-                </tr>
-                {{/each}}
-            </tbody>
-        </table>
-    </script>
 </head>
 
 <body>
@@ -44,17 +25,21 @@
                     <!-- <a class="google" href="#">Gmail登入</a> -->
                 </p>
             </div>
+            <!-- 選中此題目吃this，會出現光暈和兩條線 -->
+            <!-- 跑動畫隨機時吃"random" -->
+            <!-- 答對吃yes -->
+            <!-- 答錯吃no -->
             <div class="loginAfterBox" style="display: none;">
                 <p class="topic">题目</p>
                 <div class="gridBox">
-                    <ul class="clearfix">
-                        <li><p class="p1 this">Q1</p></li><!-- 選中此題目吃this，會出現光暈和兩條線 -->
+                    <!-- <ul class="clearfix">
+                        <li><p class="p1 this">Q1</p></li>
                         <li><p>Q2</p></li>
                         <li><p>Q3</p></li>
                         <li><p>Q4</p></li>
-                        <li><p class="random">Q5</p></li><!-- 跑動畫隨機時吃"random" -->
-                        <li><p class="yes">Q6</p></li><!-- 答對吃yes -->
-                        <li><p class="no">Q7</p></li><!-- 答錯吃no -->
+                        <li><p class="random">Q5</p></li>
+                        <li><p class="yes">Q6</p></li>
+                        <li><p class="no">Q7</p></li>
                         <li><p>Q8</p></li>
                         <li><p class="p9">Q9</p></li>
                         <li><p class="p10">Q10</p></li>
@@ -73,7 +58,7 @@
                         <li><p>Q23</p></li>
                         <li><p class="p24">Q24</p></li>
                         <li><p class="p25">Q25</p></li>
-                    </ul>
+                    </ul> -->
                 </div>
             </div>
         </div>
