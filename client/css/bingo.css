@@ -242,6 +242,7 @@ select {-moz-appearance: none;  text-indent: 0.01px; text-overflow: '';}
 .pop_info .QBox input[type="radio"] { display:none; }
 .pop_info .QBox input[type="radio"] + label span { display:inline-block; width:19px; height:19px; margin:-1px 4px 0 0; vertical-align:middle; background:url(../images/check_radio_sheet.png) left top no-repeat; cursor:pointer;  -webkit-transition:all .0s ease-in-out; -moz-transition:all .0s ease-in-out; -o-transition:all .0s ease-in-out; -ms-transition:all .0s ease-in-out;}
 .pop_info .QBox input[type="radio"]:checked + label span { background:url(../images/check_radio_sheet.png) -19px top no-repeat;  -webkit-transition:all .0s ease-in-out; -moz-transition:all .0s ease-in-out; -o-transition:all .0s ease-in-out; -ms-transition:all .0s ease-in-out;}
+.pop_info .QBox label.option{ cursor: pointer; }
 
 .pop_info .btn_yellBox{ width: 100%; padding-top: 30px;} 
 .pop_info .btn_yellBox button{ width: 156px; height: 48px; display: block; margin: 0 auto;}

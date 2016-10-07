@@ -9,9 +9,9 @@
             {{#each options}}
             <li class="aBox clearfix">
                 <div class="s_radio">
-                    <input type="radio" id="answer{{ this.id }}" name="answer" value="{{ this.id }}" /><label for="answer{{ this.id }}"><span></span></label>
+                    <input type="radio" id="answer{{ this.id }}" name="answer" value="{{ this.id }}" /><label><span></span></label>
                 </div>
-                <p>{{ this.content }}</p>
+                <p><label class="option" for="answer{{ this.id }}"><span>{{ this.content }}</span></label></p>
             </li>
             {{/each}}
             </form>
