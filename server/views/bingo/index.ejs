@@ -1,6 +1,23 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+    <script type="text/x-handlebars-template" id="tplQuestion">
+        <p class="time_over"><span class="icon">你還剩下</span><span class="time">{{ time }}</span>秒....</p>
+        <h3 class="theme">Q{{ number }} : {{ content }}</h3>
+        <ul class="answerBox">
+            <form id="answerForm">
+            {{#each options}}
+            <li class="aBox clearfix">
+                <div class="s_radio">
+                    <input type="radio" id="answer{{ this.id }}" name="answer" value="{{ this.id }}" /><label for="answer{{ this.id }}"><span></span></label>
+                </div>
+                <p>{{ this.content }}</p>
+            </li>
+            {{/each}}
+            </form>
+        </ul>
+        <div class="btn_yellBox"><button class="ok">確認</button></div>
+    </script>
     <% include partials/head %>
 </head>
 
@@ -32,19 +49,19 @@
             <div class="loginAfterBox" style="display: none;">
                 <p class="topic">题目</p>
                 <div class="gridBox">
-                    <!-- <ul class="clearfix">
-                        <li><p class="p1 this">Q1</p></li>
+                    <ul class="clearfix">
+                        <li><p class="p1">Q1</p></li>
                         <li><p>Q2</p></li>
                         <li><p>Q3</p></li>
                         <li><p>Q4</p></li>
-                        <li><p class="random">Q5</p></li>
-                        <li><p class="yes">Q6</p></li>
-                        <li><p class="no">Q7</p></li>
+                        <li><p>Q5</p></li>
+                        <li><p>Q6</p></li>
+                        <li><p>Q7</p></li>
                         <li><p>Q8</p></li>
                         <li><p class="p9">Q9</p></li>
                         <li><p class="p10">Q10</p></li>
                         <li><p>Q11</p></li>
-                        <li><p class="yes">Q12</p></li>
+                        <li><p>Q12</p></li>
                         <li><p>Q13</p></li>
                         <li><p class="p14">Q14</p></li>
                         <li><p class="p15">Q15</p></li>
@@ -54,11 +71,11 @@
                         <li><p class="p19">Q19</p></li>
                         <li><p class="p20">Q20</p></li>
                         <li><p class="p21">Q21</p></li>
-                        <li><p class="yes">Q22</p></li>
+                        <li><p>Q22</p></li>
                         <li><p>Q23</p></li>
                         <li><p class="p24">Q24</p></li>
                         <li><p class="p25">Q25</p></li>
-                    </ul> -->
+                    </ul>
                 </div>
             </div>
         </div>
@@ -78,6 +95,8 @@
     <p class="Copyright">Copyright © TUA 台灣泌尿科醫學會<br/>
     Powered by Chung-You Tsai M.D. All rights reserved.</p>
 </footer>
+
+<% include partials/popups %>
 
 </body>
 </html>
