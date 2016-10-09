@@ -1,12 +1,11 @@
 @charset "utf-8";
 /* CSS Document */
 
-body, div, dl, dt, dd, ul, ol, li, h1, h2, h3, h4, h5, h6, pre, form, fieldset, input, textarea, p, blockquote { margin:0;	padding:0;}
-fieldset, img {	border:0;}
+body, div, dl, dt, dd, ul, ol, li, h1, h2, h3, h4, h5, h6, pre, form, fieldset, input, textarea, p, blockquote { margin:0;  padding:0;}
+fieldset, img { border:0;}
 ol, ul {list-style:none;}
 abbr, acronym { border:0;}
 .CLEAR{ clear:both; height: 0; font-size: 0px; line-height: 0;}
-.clearfix:after {content: "."; display: block; clear: both; visibility: hidden;	line-height: 0;	height: 0;}
 
 @font-face {
   font-family: "Microsoft JhengHei";
@@ -19,6 +18,7 @@ abbr, acronym { border:0;}
 }
 
 
+.clearfix:after {content: "."; display: block; clear: both; visibility: hidden; line-height: 0; height: 0;}
 
 html, body, div, span, object, iframe,
 h1, h2, h3, h4, h5, h6, p, blockquote, pre,
@@ -55,10 +55,10 @@ q:before, q:after {
 
 a{text-decoration:none;}
 em{/*font-style:normal;*/}
-fieldset, img {	border:0;}
+fieldset, img { border:0;}
 ol, ul { list-style:none;}
-abbr, acronym {	border:0;}
-.CLEAR{	clear:both; height: 0; font-size: 0px; line-height: 0;}
+abbr, acronym { border:0;}
+.CLEAR{ clear:both; height: 0; font-size: 0px; line-height: 0;}
 
 /**
  * Markup free clearing
@@ -77,7 +77,7 @@ abbr, acronym {	border:0;}
   min-height: 1%;}
 
 
-body, h1, h2, h3, h4, h5, h6, p { font-family: 'Bitter',"微軟正黑體","Microsoft JhengHei", serif; -webkit-font-smoothing: antialiased;}
+body, h1, h2, h3, h4, h5, h6, p { font-family: 'Arial',"微軟正黑體","Microsoft JhengHei", 'Arial',serif; -webkit-font-smoothing: antialiased;}
 p{ font-size:15px;  line-height:24px;/*font-family: 'Nunito', sans-serif;*/}
 a{  text-decoration:none; outline: none; /* for Firefox */  hlbr:expression(this.onFocus=this.blur()); /* for IE */-webkit-transition:all .5s ease-in-out; -moz-transition:all .5s ease-in-out; -o-transition:all .5s ease-in-out; -ms-transition:all .5s ease-in-out;}
 a:hover{ text-decoration:none; -webkit-transition:all .5s ease-in-out; -moz-transition:all .5s ease-in-out; -o-transition:all .5s ease-in-out; -ms-transition:all .5s ease-in-out;}
@@ -93,7 +93,7 @@ select, input, textarea, button { font-family:"微軟正黑體","Microsoft Jheng
 
 body{ background: url(../images/br_00.jpg) center top repeat; background-size: cover; /*background-attachment: fixed;*/ position: relative;  padding-bottom:70px;}
 
-.gameBox { width: 100%; margin-top: 152px;}
+.gameBox { width: 100%; padding-top: 152px;}
 .gameBox .leftBox25{ width: 70%; float: left; display: block; background: url(../images/blackboard.png) center top no-repeat; background-size: contain;}
 .gameBox .leftBox25 .loginBeforeBox{ width: 100%; height: 740px; }
 
@@ -145,7 +145,7 @@ body{ background: url(../images/br_00.jpg) center top repeat; background-size: c
 .footerBox p.Copyright{ font-size: 11px; color: #fff; line-height: 20px; text-align: right; text-shadow: 0 0 8px #000;}
 
 @media (max-width:1455px){.ContentsBox{ width: 1200px;}
-  .gameBox{ margin-top: 80px; }
+  .gameBox{ padding-top: 80px; }
   .gameBox .leftBox25 h1.gameName{ margin-top: 100px; }  
   .gameBox .leftBox25 .loginBeforeBox{ height: 600px; }
   .gameBox .leftBox25 .loginAfterBox ul li{ min-height: 105px;}
@@ -203,15 +203,15 @@ body{ background: url(../images/br_00.jpg) center top repeat; background-size: c
   .gameBox .leftBox25 .loginBeforeBox{height: 350px;}}
 
 @media (max-width:320px){.ContentsBox{ width: 300px; }
+  .gameBox .leftBox25 .loginBeforeBox{height: 300px;}
   .gameBox .leftBox25 .loginAfterBox ul li p{font-size: 16px; line-height: 35px;}
   .gameBox .leftBox25 .loginAfterBox ul li{min-height: 35px;}
   .gameBox .leftBox25 .loginAfterBox .gridBox{background-position: 4px 17px;}
   .gameBox .GameExplanation .userBox p{font-size: 16px;}
-  .footerBox p.Copyright{ line-height: 16px; width: 85%; margin: 0 auto;}
   .gameBox .leftBox25 p.loginBox{ max-width: 215px; }
   .gameBox .leftBox25 p.loginBox a{margin: 8px 0; height: 38px;}
-  .gameBox .leftBox25 .loginBeforeBox{height: 300px;}
   .gameBox .leftBox25 h1.gameName{height: 100px;}
+  .footerBox p.Copyright{ line-height: 16px; width: 85%; margin: 0 auto;}
   body{ padding-bottom: 40px; }}
 
 .styled-select { width:100%; max-width: 800px; min-width: 120px; height:36px; border: 1px solid #00aad0; color: #00aad0; overflow: hidden; background: url(../images/icon_arr_d.png) right center no-repeat #fff; border-radius: 0px 4px 4px 0px;}
@@ -229,10 +229,16 @@ select {-moz-appearance: none;  text-indent: 0.01px; text-overflow: '';}
 :root .styled-select select option{ background-color:#fff\9\0; padding:5px 0\9\0;}
 
 
-.br_01{ background: url(../images/br_01.jpg) center center no-repeat #343436; }
+.pop_bk{ width: 100%; background-color: rgba(0,0,0,.50); position: absolute; top: 0; z-index: 980;}
+
+.pop_close{ cursor: pointer; position: absolute; ; top: -25px; right: -25px; width: 37px; height: 37px; z-index: 1000; display: block; background: url(../images/the_pop_btn_close.png) center center no-repeat; background-size: contain;}
+.pop_close:hover{ opacity: .9; }
+
+.pop_info{ width: 100%; position: absolute; z-index: 990;}
+.pop_info .QBox{ position: relative; width: 86%; max-width: 800px; margin: 0 auto; padding: 50px 75px;  background: url(../images/br_01.jpg) center center no-repeat #343436; border: 5px solid #dddddd; border-radius: 55px;}
 .pop_info .QBox p, .pop_info .QBox h3{ color: #fff; font-weight: bold;text-align: justify; }
-.pop_info .QBox{ width: 86%; margin: 0 auto; padding: 50px 0 25px 0; }
-.pop_info .QBox h3.theme{ padding-bottom: 30px; font-size: 20px;  line-height: 28px;  }
+
+.pop_info .QBox h3.theme{ padding-bottom: 30px; font-size: 20px;  line-height: 28px; color: #ffe0e0; }
 .pop_info .QBox p.time_over{ text-align: center; height: 80px; padding: 20px 0;} 
 .pop_info .QBox p.time_over span.icon{ padding: 55px 0 12px 100px; background: url(../images/icon_overTime.png) center left no-repeat}
 .pop_info .QBox p.time_over span.time{ color: #ffee2e; font-size: 70px; font-weight: bold; }
@@ -245,9 +251,64 @@ select {-moz-appearance: none;  text-indent: 0.01px; text-overflow: '';}
 .pop_info .QBox label.option{ cursor: pointer; }
 
 .pop_info .btn_yellBox{ width: 100%; padding-top: 30px;} 
-.pop_info .btn_yellBox button{ width: 156px; height: 48px; display: block; margin: 0 auto;}
-.pop_info .btn_yellBox button.ok{ background: url(../images/br_btn_ok.png) center center no-repeat #ffee2e;}
+.pop_info .btn_yellBox button{ width: 156px; height: 48px; display: block; margin: 0 auto; text-indent: -9999px;}
+.pop_info .btn_yellBox button.ok{ cursor: pointer; background: url(../images/br_btn_ok.png) center center no-repeat #ffee2e; background-size: contain;}
+.pop_info .btn_yellBox button.ok:hover{ background-color: #ffd200; }
 
+.pop_info .btn_yellBox button.continue { background-image : url(../images/br_btn_continue.png);}
+
+.pop_info .QBox .answerBox{ width: 100%; }
+.pop_info .QBox .answerBox p.title_icon{ font-size: 22px; color: #4aff70; text-align: center; padding-top: 100px; background: url(../images/icon_right.png) center center no-repeat ; background-size: contain;}
+.pop_info .QBox .answerBox p.Congratulation{ color: #ffee2e; background-image: url(../images/icon_Congratulation.png);}
+.pop_info .QBox .answerBox p.wrong{ color: #ffee2e; background-image: url(../images/icon_wrong.png);}
+.pop_info .QBox .answerBox p.good_a{ width: 100%; font-size: 20px; color: #fff; line-height: 28px; padding: 30px 0;}
+.pop_info .QBox .answerBox p.good_a span{ color: #ffee2e; }
+.pop_info .QBox .answerBox p.result{ text-align: center; padding: 60px 0 30px 0;}
+.pop_info .QBox .answerBox p.result span{ font-size: 70px; font-weight: bold; padding: 0 5px;}
+.pop_result .QBox{ max-width: 480px; }
+.pop_result .QBox .btn_w_line{ width: 100%; max-width: 400px; margin:0 auto; }
+.pop_result .QBox .btn_w_line button{ cursor: pointer; width: 46%; height: 48px; margin:0 1.5%; border:1px solid #e0e0e0; text-indent: -9999px;}
+.pop_result .QBox .btn_w_line button.ThatsAll{ background: url(../images/btn_w_line_a.png) center center no-repeat; background-size: contain; }
+.pop_result .QBox .btn_w_line button.carryOn{ background: url(../images/btn_w_line_b.png) center center no-repeat; background-size: contain; }
+
+.pop_result .resultBox p.topTitle{ width: 100%; text-indent: -9999px; height: 47px; display: block; background: url(../images/pop_title_score.png) center left no-repeat; background-size: contain;}
+.pop_result .QBox{max-width: 530px; padding: 50px 50px;}
+.pop_result .QBox .resultBox p.result{ text-align: right;  padding-top: 10px;}
+.pop_result ul.userFillBox{ width: 86%; border-top: 1px dashed #e0e0e0; padding: 40px 7% 20px 7%;}
+.pop_result ul.userFillBox li{ margin-bottom: 10px; }
+.pop_result ul.userFillBox li p{ float: left; font-size: 22px; width: 25%; }
+.pop_result ul.userFillBox li input{ float: left; font-size: 20px; width: 65%; line-height: 20px; color: #fff; padding: 5px 5%; background-color: #6a6767; border-radius: 5px; font-family: 'Arial',"微軟正黑體","Microsoft JhengHei", 'Arial',serif;}
+.pop_result .QBox .resultBox .btn_w_line{ width: 172px; padding-bottom: 40px;}
+.pop_result .QBox .resultBox .btn_w_line button{ width: 100%; margin: 0; background: url(../images/btn_w_line_c.png) center center no-repeat; background-size: contain;}
+.pop_result .QBox .btn_w_line button:hover, .pop_result .QBox .resultBox .btn_w_line button:hover{ background-color: #666; }
+.pop_result .shareBox{border-top: 1px dashed #e0e0e0; padding: 20px 0; width: 100%;}
+.pop_result .shareBox p{ float: left; line-height: 44px; margin-right: 10px;}
+.pop_result .shareBox a{ float: left; width: 44px; height: 44px; display: block; margin: 0px 4px;}
+.pop_result .shareBox a.fb{ background: url(../images/share_icon_fb.png) center center no-repeat; background-size: contain;}
+.pop_result .shareBox a.ig{ background: url(../images/share_icon_ig.png) center center no-repeat; background-size: contain;}
+.pop_result .shareBox a.tt{ background: url(../images/share_icon_tt.png) center center no-repeat; background-size: contain;}
+.pop_result .shareBox a.fb:hover{ background: url(../images/share_icon_fb_in.png) center center no-repeat; background-size: contain;}
+.pop_result .shareBox a.ig:hover{ background: url(../images/share_icon_ig_in.png) center center no-repeat; background-size: contain;}
+.pop_result .shareBox a.tt:hover{ background: url(../images/share_icon_tt_in.png) center center no-repeat; background-size: contain;}
+
+@media (max-width:1000px){.pop_info .QBox{max-width: 78%;padding: 50px 5%;}}
 @media (max-width:660px){ .pop_info .QBox ul.answerBox li.aBox p{ width: 90%; }}
 @media (max-width:599px){.pop_info .QBox h3.theme{ font-size: 18px; line-height: 25px;}
-  .pop_info .QBox ul.answerBox li.aBox p{ font-size: 16px; }}
+  .pop_info .QBox ul.answerBox li.aBox p, .pop_info .QBox .answerBox p.good_a{ font-size: 16px; }
+  .pop_result ul.userFillBox li p{ width: 100%; text-align: center; padding: 10px 0; }
+  .pop_result ul.userFillBox li input{ width: 90%; }}
+@media (max-width:499px){.pop_info .QBox ul.answerBox li.aBox p{ width: 88%; }
+  .pop_info .QBox p.time_over span.icon{ background-size: contain; }
+  .pop_info .QBox p.time_over span.time { font-size: 50px; }
+  .pop_result .shareBox a{ width: 40px; height: 40px; }}
+@media (max-width:380px){.pop_info .QBox h3.theme{ font-size: 16px; padding-bottom: 20px;}
+  .pop_info .QBox ul.answerBox li.aBox p{ font-size: 15px; }
+  .pop_info .QBox p.time_over{ height: 55px; }
+  .pop_result .QBox .resultBox p.result{ padding-top: 40px; }}
+@media (max-width:380px){.pop_info .QBox ul.answerBox li.aBox p{ width: 86%; }
+  .pop_result .QBox{ padding: 28px 5%; }
+  .pop_info .QBox .answerBox p.result{ text-align: center;}
+  .pop_info .QBox .answerBox p.result span{ font-size: 44px;}
+  .pop_result .resultBox p.topTitle{ background-position: center; }}
+
+
