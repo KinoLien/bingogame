@@ -11,8 +11,8 @@ var idToGameStatus = {
 var rules = {
   playing: ['check_blocks', 'next_block_question', 'answer_question'],
   // this step to write user locked, check_gift or write_user status is locked
-  locked: ['check_blocks', 'check_gift', 'end'], 
-  end: ['check_blocks', 'end']
+  locked: ['check_blocks', 'check_gift', 'show_result', 'end'], 
+  end: ['check_blocks', 'show_result', 'end']
 }
 
 function Create2DArray(rows) {
@@ -86,6 +86,17 @@ function getBlockLines(){
   return patterns;
 }
 
+function getBlockCorrectCount(){
+  var blocks = this.blocks;
+  var res = 0;
+  for(var i = 0, xlen = blocks.length; i < xlen; i++){
+    for(var j = 0, ylen = blocks.length; j < ylen; j++){
+      if(blocks[i][j] == 1) res++;
+    }
+  }
+  return res;
+}
+
 module.exports = function (socket, io) {
 
   var gameStatus = {};
@@ -107,6 +118,7 @@ module.exports = function (socket, io) {
       id: id,
       player_id: 0,
       maxlines: 0,
+      correctCount: 0,
       from: strFrom,
       status: 'playing',
       answeredQues: [],
@@ -134,13 +146,18 @@ module.exports = function (socket, io) {
         // status 
         gameStatus.status = res.status || gameStatus.status;
 
+        // update count
+        gameStatus.correctCount = getBlockCorrectCount.call(gameStatus);
+
         switch(res.status){
           case "end":
             gameStatus.currentAction = "end";
             break;
           case "locked":
-            gameStatus.currentAction = "check_gift";
-            navigate = "end";
+            // gameStatus.currentAction = "check_gift";
+            // navigate = "end";
+            gameStatus.currentAction = "check_blocks";
+            navigate = "check_gift";
             break;
           case "playing":
           default:
@@ -213,12 +230,14 @@ module.exports = function (socket, io) {
 
     if(validRules.call(gameStatus, 'check_blocks')){
       var lines = getBlockLines.call(gameStatus); // array
+      var count = getBlockCorrectCount.call(gameStatus);
       var emptyBlock = getNextValidBlock.call(gameStatus);  // object: xy
       var hasEmpty = emptyBlock !== false;
       var linesChanged = gameStatus.maxlines != lines.length;
       var data = {};
 
       // update cache gamestatus
+      gameStatus.correctCount = count;
       gameStatus.maxlines = Math.max(gameStatus.maxlines, lines.length);
       gameStatus.status = "playing";
 
@@ -230,7 +249,7 @@ module.exports = function (socket, io) {
       }else if(hasEmpty){
         navigate = "next_block_question";
       }else{
-        navigate = "end";
+        navigate = "show_result";
       }
       
       // if(linesChanged || (lines.length && !hasEmpty) ){
@@ -246,6 +265,7 @@ module.exports = function (socket, io) {
       data.allBlocks = gameStatus.blocks;
       data.hasEmpty = hasEmpty;
       data.navigate = navigate;
+      data.runAnimate = navigate == "next_block_question";
 
       // update player info about: lines, status
       service.updatePlayer({ 
@@ -269,11 +289,13 @@ module.exports = function (socket, io) {
         status: "locked"
       }).then(function(res){
         var data = {};
-        if(res){
+        if(res && gameStatus.currentEarn != res.type){
           gameStatus.currentEarn = res.type;
           data.hasGift = true;  
           data.giftContent = res.type;
-          data.navigate = "end";
+          data.navigate = "show_result";
+          data.lineCount = gameStatus.maxlines;
+          data.correctCount = gameStatus.correctCount;
         }else{
           gameStatus.currentAction = "answer_question";
           data.hasGift = false; 
@@ -283,6 +305,28 @@ module.exports = function (socket, io) {
         // return
         socket.emit('res_check_gift', data);  
       });
+    }
+  });
+
+  // message.continue
+  socket.on('req_show_result', function(message){
+    if(!gameStatus.id) return;
+    if(validRules.call(gameStatus, 'show_result')){
+      var data = {};
+      var hasEmpty = getNextValidBlock.call(gameStatus) !== false;
+      if(message.continue && hasEmpty){
+        gameStatus.currentAction = "answer_question";
+        data.isShow = false;
+        data.navigate = "check_blocks";
+      }else{
+        data.isShow = true;
+        data.navigate = "end";
+        data.lineCount = gameStatus.maxlines;
+        data.correctCount = gameStatus.correctCount;
+      }
+
+      // return
+      socket.emit('res_show_result', data);  
     }
   });
 

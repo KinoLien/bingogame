@@ -1,19 +1,7 @@
 
 function log(msg){ 
-    // $("#logRegion").append('<div>' + msg + '</div>');
     console.log(msg);
 }
-function logCount(second){ 
-    // var countId = 'logCount';
-    // var countEl = document.getElementById(countId);
-    
-    // if(!countEl) $("#logRegion").append('<div id="' + countId + '"></div>');
-
-    // var countJQ = $("#" + countId);
-
-    // if(second == -1) countJQ.remove();
-    // else countJQ.text(second);
-};
 
 function randomItem(items){
     return items[Math.floor(Math.random() * items.length)];
@@ -22,7 +10,7 @@ function randomItem(items){
 (function(scope){
     function gameState(){}
 
-    Handlebars.registerHelper('is_status', function(val, num, opts) {
+    Handlebars.registerHelper('equal', function(val, num, opts) {
         if(val == num) return true;
         else return false;
     });
@@ -33,12 +21,18 @@ function randomItem(items){
     var gameBlocks = Handlebars.compile(
         '<ul class="clearfix">\
             {{#each blocks}}\
-            <li><p class="p{{counter @index}} {{#if (is_status this 1)}}yes{{else if (is_status this -1)}}no{{else}}empty{{/if}}">Q{{counter @index}}</p></li>\
+            <li><p class="p{{counter @index}} {{#if (equal this 1)}}yes{{else if (equal this -1)}}no{{else}}empty{{/if}}">Q{{counter @index}}</p></li>\
             {{/each}}\
         </ul>'
     );
 
     var questionRegion = Handlebars.compile( $("#tplQuestion").html() );
+
+    var answerRegion = Handlebars.compile( $("#tplAnswer").html() );
+
+    var scoreRegion = Handlebars.compile( $("#tplScore").html() );
+
+    var resultRegion = Handlebars.compile( $("#tplResult").html() );
 
     gameState.beforeLogin = function(){
         $(".loginBeforeBox").show();
@@ -76,51 +70,169 @@ function randomItem(items){
         return $(".gridBox p.empty");
     };
 
-    gameState.renderQuestion = function(callbackData){
+    gameState.showQuestion = function(callbackData){
         var renderData = {};
         var xy = callbackData.block;
+        var nextTask = callbackData.navigate;
         renderData.time = 10;
         renderData.number = xy.x * 5 + (xy.y + 1);
         renderData.content = callbackData.question.content;
         renderData.options = callbackData.question.options;
-        $("#questionBox .QBox").html( questionRegion( renderData ) );
-    };
-
-    gameState.showQuestion = function(callbackData){
-        var nextTask = callbackData.navigate;
+        
         var downCountInterval;
+        var modal = this.panelModal;
 
-        $.fancybox($("#questionBox"), { 
-            afterShow:function(){
+        modal.render({
+            content: questionRegion( renderData ),
+            events: [
+                { selector: ".ok", event: "click", toClose:true }
+            ],
+            afterOpen: function(){
                 // start counting
-                var countingEl = $("#questionBox .QBox .time");
+                var countingEl = $("#popupBox .QBox .time");
                 var startFrom = parseInt(countingEl.text());
                 downCountInterval = setInterval(function(){
                     countingEl.text(--startFrom);
                     if(startFrom == 0) {
-                        $.fancybox.close();
+                        modal.close();
                     }
                 }, 1000);
-                $("#questionBox .QBox .ok").click(function(){ $.fancybox.close(); });
+            },
+            beforeClose: function(){
+                if(downCountInterval) clearInterval(downCountInterval);
             },
             afterClose: function(){
-                if(downCountInterval) clearInterval(downCountInterval);
-
                 var answer_id;
                 $("#answerForm").serializeArray().forEach(function(item){
                     if(item.name = "answer"){ answer_id = parseInt(item.value); }
-                })
-                // collect current answer
-                gameState.emit(nextTask, { answer_id: answer_id });
+                });
+
+                this.setNextTask(nextTask, { answer_id: answer_id } );
             }
-        } );
+        });
+
+        setTimeout(function(){ modal.open(); }, 500);
+    };
+
+    gameState.showAnswer = function(callbackData){
+        var nextTask = callbackData.navigate;
+
+        var modal = this.panelModal;
+
+        modal.render({
+            content: answerRegion( callbackData ),
+            events:[
+                { selector: ".ok", event: "click", toClose:true }
+            ]
+        });
+
+        modal.setNextTask(nextTask);
+
+        setTimeout(function(){ modal.open(); }, 500);
     }
+
+    gameState.showScore = function(callbackData){
+        var nextTask = callbackData.navigate;
+
+        var modal = this.panelModal;
+
+        modal.render({
+            content: scoreRegion( callbackData ),
+            events: [
+                { selector: ".ThatsAll", event: "click", toClose:true, fn: function(){ modal.setNextTask(nextTask); } },
+                { selector: ".carryOn", event: "click", toClose:true, fn: function(){ modal.setNextTask(nextTask, {continue: true}); } }
+            ],
+        });
+        
+        setTimeout(function(){ modal.open(); }, 500);
+        
+    };
+
+    gameState.showResult = function(callbackData){
+        var nextTask = callbackData.navigate;
+
+        var modal = this.panelModal;
+
+        modal.render({
+            content: resultRegion( callbackData ),
+            events: [
+                { selector: ".ok", event:"click", toClose:true, fn: function(){
+                    var data = {};
+
+                    $("#resultForm").serializeArray().forEach(function(item){
+                        data[item.name] = item.value;
+                    });
+
+                    modal.setNextTask(nextTask, data);
+                } }
+            ]
+        });
+
+        setTimeout(function(){ modal.open(); }, 500);
+    };
 
     gameState.emit = function(event, data){
         if(socketInstance){
             socketInstance.emit('req_' + event, data);
         }
     };
+
+    gameState.panelModal = (function(){
+        var renderSelector = "#popupBox";
+        var openSelector = "#popupBox";
+        return {
+            render: function(prop){
+                var content = prop.content;
+                var events = prop.events;
+
+                if(content){
+                    $(renderSelector).html(content);
+                }
+                if(events){
+                    var scope = this;
+                    for(var i = 0, len = events.length; i < len; i++){
+                        var item = events[i];
+                        if(item.fn){
+                            $(renderSelector).find(item.selector).on(item.event, item.fn);    
+                        }
+                        if(item.toClose){
+                            $(renderSelector).find(item.selector).on(item.event, function(){ scope.close(); } );
+                        }
+                        
+                    }
+                }
+
+                this.beforeOpen = prop.beforeOpen;
+                this.afterOpen = prop.afterOpen;
+
+                this.beforeClose = prop.beforeClose;
+                this.afterClose = prop.afterClose;
+            },
+            setNextTask: function(taskName, data){
+                this.nextTask = { task: taskName, data: data };
+            },
+            open: function(){
+                var scope = this;
+                if(scope.beforeOpen) scope.beforeOpen();
+                $(openSelector).fadeIn({
+                    complete: function(){
+                        if(scope.afterOpen) scope.afterOpen();
+                    }
+                });
+            },
+            close: function(){
+                var scope = this;
+                if(scope.beforeClose) scope.beforeClose();
+                $(openSelector).fadeOut({
+                    complete: function(){
+                        if(scope.afterClose) scope.afterClose();
+                        if(scope.nextTask) gameState.emit(scope.nextTask.task, scope.nextTask.data);
+                        $(renderSelector).html("");
+                    }
+                });
+            }
+        };
+    })();
 
     gameState.blockAnimate = (function(){
         var _isAnimating = false;
@@ -230,87 +342,34 @@ function init_socket(uid){
         }
     });
 
-    // data.lines
-    // data.allBlocks
-    // data.hasEmpty
     socketInstance.on('res_check_blocks', function(data){
         log("Update Blocks Info");
         gameState.refreshBlocks(data.allBlocks);
         
         var task = data.navigate;
 
-        // next_block_question, check_gift, end
         if(task){
             log("To Do action: " + task);
-            if(task == "next_block_question"){
+            if(data.runAnimate){
                 log("Do Block choose animation");
                 gameState.blockAnimate.start();
             }
-            next(function(){ socketInstance.emit('req_' + task, {}); });
+            gameState.emit(task);
         }
     });
 
-    // data.block
-    // data.allBlocks
-    // data.question
-    // data.navigate
     socketInstance.on('res_next_block_question', function(data){
         log("res Next block call back");
         log("Wait for animation stop");
         gameState.blockAnimate.stop(6, function(){
-            var task = data.navigate;
-            var xy = data.block;
-            var start = (new Date()).getTime();
-            var intervals = [];
-            var testSecondsList = [1,1];
-            var testInterval = null;
-
-            gameState.markSelect(xy.x, xy.y);
-            gameState.renderQuestion(data);
-
-            setTimeout(function(){                
-                gameState.showQuestion(data);
-            }, 500);
-
-            // var doEmit = function(answerid){
-            //     clearInterval(testInterval);
-            //     intervals.forEach(function(item){ clearInterval(item); });
-            //     logCount(-1);
-            //     socketInstance.emit('req_' + task, { answer_id: answerid });
-            // };
-
-            // log("Row: " + (xy.x+1) + " Col: " + (xy.y+1) + " Chosed.");
-            // log("=== Random to Answer ===");
-
-            // log("=== Wait 10 seconds ===");
-            // logCount(0); 
-            // for(var i = 1; i <= 10; i++){
-            //     intervals.push(setTimeout(function(showSec){
-            //         return function(){ 
-            //             logCount(showSec); 
-            //             if(showSec == 10){ doEmit(); }
-            //         };
-            //     }(i), i * 1000));
-            // }
-
-            // testInterval = setTimeout((function(question){
-            //     return function(){
-            //         var options = question.options;
-            //         var randomAnswer = options[options.length-1];
-            //         // var randomAnswer = randomItem(options.slice(2));
-            //         log("Answer Question: " + question.id);
-            //         log("answer_id: " + randomAnswer.id );
-            //         doEmit(randomAnswer.id);
-            //     };
-            // })(data.question), randomItem(testSecondsList) * 1000);
+            
+            gameState.markSelect(data.block.x, data.block.y);
+            
+            gameState.showQuestion(data);
+            
         });
     });
 
-    // data.id
-    // data.block
-    // data.navigate
-    // data.correct
-    // data.explain
     socketInstance.on('res_answer_question', function(data){
         log("Answer is " + (data.correct? "correct" : "fail") );
         log("Show Explain: " + data.explain);
@@ -319,30 +378,36 @@ function init_socket(uid){
 
         gameState.markAnswer(xy.x, xy.y, data.correct);
 
-        next(function(){
-            socketInstance.emit('req_' + data.navigate, {});
-        });
+        gameState.showAnswer(data);
+
     });
 
-    // data.hasGift
-    // data.giftContent
-    // data.navigate
     socketInstance.on('res_check_gift', function(data){
         if(data.hasGift){
             log("You Earned: " + data.giftContent);
             log("=== Enter name and address OR continue ===");
-            next(function(){
-                var stamp = (new Date()).getTime();
-                var items = [
-                    {}, { name: "testname-" + stamp, address: "testaddress-" + stamp }
-                ];
-                socketInstance.emit('req_' + data.navigate, randomItem(items) );
-            });
+
+            gameState.showScore(data);
+
         }else{
             log("No new gift");
-            next(function(){
-                socketInstance.emit('req_' + data.navigate, {});
-            });
+            gameState.emit(data.navigate);
+        }
+    });
+
+    socketInstance.on('res_show_result', function(data){
+        if(data.isShow){
+            // to show the result
+            log("Showing Results");
+            log("line: " + data.lineCount + " counts:" + data.correctCount);
+
+            data.name = currentName;
+            data.email = currentEmail;
+
+            gameState.showResult(data);
+
+        }else{
+            gameState.emit(data.navigate);
         }
     });
 
@@ -397,7 +462,7 @@ function statusChangeCallback(response) {
         log("Initialize Socket");
         // log(JSON.stringify(response));
         var userID = response.authResponse.userID;
-        FB.api('/me', function(res){
+        FB.api('/me', { fields: 'name, email' }, function(res){
             currentEmail = res.email; 
             currentName = res.name;
             gameState.afterLogin({name:currentName});
@@ -453,24 +518,4 @@ function fb_login(){
     //     scope: 'public_profile,email'
     // });
 }
-
-// for the test
-$(window).load(function(){
-
-    // socketInstance = io.connect();
-
-    // socketInstance.on('connect', function(msg){
-    //     log("init connect: " +  msg);
-    // });
-    
-    // get the FB ID
-    // return: String ""||"12833295928375..."
-    // FB.getUserID()
-
-    // get the FB name
-    // FB.api('/me', function(response) {
-    //   alert('Your name is ' + response.name);
-    // });
-});
-
 

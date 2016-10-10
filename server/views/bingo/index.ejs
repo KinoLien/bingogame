@@ -1,24 +1,11 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <script type="text/x-handlebars-template" id="tplQuestion">
-        <p class="time_over"><span class="icon">你還剩下</span><span class="time">{{ time }}</span>秒....</p>
-        <h3 class="theme">Q{{ number }} : {{ content }}</h3>
-        <ul class="answerBox">
-            <form id="answerForm">
-            {{#each options}}
-            <li class="aBox clearfix">
-                <div class="s_radio">
-                    <input type="radio" id="answer{{ this.id }}" name="answer" value="{{ this.id }}" /><label><span></span></label>
-                </div>
-                <p><label class="option" for="answer{{ this.id }}"><span>{{ this.content }}</span></label></p>
-            </li>
-            {{/each}}
-            </form>
-        </ul>
-        <div class="btn_yellBox"><button class="ok">確認</button></div>
-    </script>
+
+    <% include partials/popuptpls %>
+    
     <% include partials/head %>
+
 </head>
 
 <body>
@@ -96,7 +83,10 @@
     Powered by Chung-You Tsai M.D. All rights reserved.</p>
 </footer>
 
-<% include partials/popups %>
+<!-- popup box -->
+<article id="popupBox" class="pop_bk" style="display:none;">
+    <!-- contents -->
+</article>
 
 </body>
 </html>

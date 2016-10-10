@@ -1,0 +1,80 @@
+
+<script type="text/x-handlebars-template" id="tplQuestion">
+	<section class="pop_info">
+        <div class="QBox">
+            <p class="time_over"><span class="icon">你還剩下</span><span class="time">{{ time }}</span>秒....</p>
+		    <h3 class="theme">Q{{ number }} : {{ content }}</h3>
+		    <ul class="answerBox">
+		        <form id="answerForm">
+		        {{#each options}}
+		        <li class="aBox clearfix">
+		            <div class="s_radio">
+		                <input type="radio" id="answer{{ this.id }}" name="answer" value="{{ this.id }}" /><label><span></span></label>
+		            </div>
+		            <p><label class="option" for="answer{{ this.id }}"><span>{{ this.content }}</span></label></p>
+		        </li>
+		        {{/each}}
+		        </form>
+		    </ul>
+		    <div class="btn_yellBox"><button class="ok">確認</button></div>
+        </div>
+    </section>
+</script>
+
+<script type="text/x-handlebars-template" id="tplAnswer">
+	<section class="pop_info">
+        <div class="QBox">
+			<div class="answerBox">
+		    	{{#if (equal correct true)}}
+		    	<p class="title_icon">恭喜您，答對了！</p>
+		    	{{else}}
+		    	<p class="title_icon wrong">很可惜，答錯了！</p>
+		    	{{/if}}
+		        <p class="good_a"><span>解答：</span>{{ explain }}</p>
+		        <div class="btn_yellBox"><button class="ok continue">繼續</button></div>
+		    </div>
+    	</div>
+    </section>
+</script>
+
+<script type="text/x-handlebars-template" id="tplScore">
+	<section class="pop_info pop_result">
+        <div class="QBox">
+			<div class="answerBox">
+		        <p class="title_icon Congratulation">恭喜您，獲得 {{ giftContent }} </p>
+		        <p class="good_a result">目前答對<span>{{ correctCount }}</span>題  連線數<span>{{ lineCount }}</span></p>
+		        <div class="btn_w_line">
+		            <button class="ThatsAll">這樣就好</button>
+		            <button class="carryOn">繼續挑戰</button>
+		        </div>
+		    </div>
+		</div>
+    </section>
+</script>
+
+<script type="text/x-handlebars-template" id="tplResult">
+	<section class="pop_info pop_result">
+        <div class="QBox">
+			<div class="answerBox resultBox">
+		        <p class="topTitle">成績結算</p>
+		        <p class="good_a result">答對<span>{{ correctCount }}</span>題  連線數<span>{{ lineCount }}</span></p>
+		        <ul class="userFillBox">
+		        	<form id="resultForm">
+			            <li class="clearfix"><p>姓名</p><input type="text" name="name" value="{{ name }}"></li>
+			            <li class="clearfix"><p>e-mail</p><input type="email" name="address" value="{{ email }}"></li>
+		            </form>
+		        </ul>
+		        <div class="btn_w_line">
+		            <button class="ok">完成</button>
+		        </div>
+		    </div>
+		    <div class="shareBox clearfix">
+		        <p>分享結果至</p>
+		        <a class="fb" href="#">
+		        <a class="ig" href="#">
+		        <a class="tt" href="#">
+		    </div>
+		</div>
+    </section>
+</script>
+
