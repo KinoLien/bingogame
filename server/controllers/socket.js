@@ -314,7 +314,7 @@ module.exports = function (socket, io) {
     if(validRules.call(gameStatus, 'show_result')){
       var data = {};
       var hasEmpty = getNextValidBlock.call(gameStatus) !== false;
-      if(message.continue && hasEmpty){
+      if(message && message.continue && hasEmpty){
         gameStatus.currentAction = "answer_question";
         data.isShow = false;
         data.navigate = "check_blocks";

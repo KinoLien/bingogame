@@ -27,36 +27,32 @@ function isLoggedIn(req, res, next) {
 
 module.exports = function(app, passport) {
 
+  // =====================================
+  // GAME ===============================
+  // =====================================
   app.get('/', function(req, res, next){
     res.render(path.resolve(__dirname, '../', 'views/bingo/index.ejs'));
   });
 
-  app.get('/console', isLoggedIn, function (req, res, next) {
-
-    res.render(path.resolve(__dirname, '../', 'views/console/index.ejs'));
-
+  app.get('/client/:type(css|js|images)/:name', function(req, res, next) {
+    var type = req.params.type;
+    var name = req.params.name;
+    res.sendFile(path.resolve(__dirname, '../../client', type, name));
   });
 
-  // app.get('/client/register', function (req, res, next) {
-  //   var referer = req.headers.referer;
-  //   if(referer){
-  //     console.log(referer);
-  //     if(checkAndUpdateCookie(req, res)){
-  //       res.sendStatus(404);
-  //     }else{
-  //       res.writeHead(200, {'Content-Type': 'text/html'});
-  //       res.write("<script>document.location.replace('" + referer + "')</script>");
-  //       res.end();
-  //     }
-  //   }else res.sendStatus(404);
-  // });
+  app.get('/uploads/:name', function(req, res, next) {
+    var name = req.params.name;
+    res.sendFile(path.resolve(__dirname, '../../uploads', type, name));
+  });
 
   // =====================================
-  // LOGIN ===============================
+  // CONSOLE ===============================
   // =====================================
+  app.get('/console', isLoggedIn, function (req, res, next) {
+    res.render(path.resolve(__dirname, '../', 'views/console/index.ejs'));
+  });
   // show the login form
   app.get('/console/login', function(req, res) {
-
       // render the page and pass in any flash data if it exists
       res.render(path.resolve(__dirname, '../', 'views/console/login.ejs'));
   });
@@ -86,19 +82,9 @@ module.exports = function(app, passport) {
       failureFlash : false // allow flash messages
   }));
 
-  // =====================================
-  // LOGOUT ==============================
-  // =====================================
   app.get('/console/logout', function(req, res) {
       req.logout();
       res.redirect('/console');
-  });
-
-
-  app.get('/client/:type(css|js|images)/:name', function(req, res, next) {
-    var type = req.params.type;
-    var name = req.params.name;
-    res.sendFile(path.resolve(__dirname, '../../client', type, name));
   });
 
   // app.get('/clientChangePath/:project', function (req, res, next) {

@@ -135,7 +135,7 @@ exports.updateQuestion = function(body){
     // adds
     _.each(adds, function(item){ promises.push(scope.addOption(item)); });
 
-    console.log(body);
+    // console.log(body);
 
     Promise.all(promises).then(function(){ resolve(); });
   });
@@ -162,7 +162,7 @@ exports.updateGift = function(body){
   var type = body.strType;
   var quan = parseInt(body.strQuan) || 0;
   var cond = body.strCondition;
-  console.log(body);
+  // console.log(body);
   return new Promise(function(resolve, reject){
     Gifts.forge().query(function(qb){
       qb.where("id", "=", id);
@@ -268,7 +268,7 @@ exports.getRemainGifts = function(){
       knex('players').where('g_id', '>', 0).count('g_id as count').select('g_id').groupBy('g_id').as('gm'),
       'gifts.id', '=', 'gm.g_id')
     .select('*');
-  console.log(query);
+  // console.log(query);
   return query
     .then(function(results){
       var remains = [];
