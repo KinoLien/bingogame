@@ -1,4 +1,6 @@
 
+// http://stackoverflow.com/questions/18831362/how-to-share-a-simple-image-on-facebook-with-callback
+
 var service = require('../services/service');
 
 var _ = require('lodash');
