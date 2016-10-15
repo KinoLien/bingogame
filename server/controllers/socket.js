@@ -3,6 +3,10 @@
 
 var service = require('../services/service');
 
+var webshot = require('webshot');
+
+var isDev = process.env.NODE_ENV === 'development';
+
 var _ = require('lodash');
 
 var idToGameStatus = {
@@ -113,11 +117,13 @@ module.exports = function (socket, io) {
     // cache the socket.unique_id
     var id = socket.unique_id;
     var strFrom = message.loginFrom || "FB";
+    var name = message.name;
     var navigate;
 
     if(!idToGameStatus[strFrom]) return;
     gameStatus = idToGameStatus[strFrom][id] = {
       id: id,
+      username: name,
       player_id: 0,
       maxlines: 0,
       correctCount: 0,
@@ -168,7 +174,13 @@ module.exports = function (socket, io) {
             break;
         }
         // console.log(gameStatus);
-        socket.emit('res_start', { status: gameStatus.status, allBlocks: gameStatus.blocks, navigate: navigate });
+        socket.emit('res_start', { 
+          status: gameStatus.status, 
+          allBlocks: gameStatus.blocks, 
+          navigate: navigate,
+          lineCount: gameStatus.maxlines,
+          correctCount: gameStatus.correctCount
+        });
       }
     });
   });
@@ -280,7 +292,7 @@ module.exports = function (socket, io) {
     }
   });
 
-  socket.on('req_check_gift', function(message){
+  socket.on('req_check_gift', function(){
     if(!gameStatus.id) return;
     if(validRules.call(gameStatus, 'check_gift')){
       // check the current lines can earn gift or not.
@@ -325,6 +337,19 @@ module.exports = function (socket, io) {
         data.navigate = "end";
         data.lineCount = gameStatus.maxlines;
         data.correctCount = gameStatus.correctCount;
+
+        // Do create image for sharing.
+        var baseUrl = isDev? 'http://127.0.0.1:5000': 'http://127.0.0.1';
+        var createUrl = [
+          baseUrl, 'createshare', 
+          encodeURIComponent(gameStatus.username),
+          encodeURIComponent(gameStatus.currentEarn), 
+          data.correctCount, data.lineCount
+        ].join('/');
+        webshot(createUrl, 'uploads/' + gameStatus.id + '.png', { shotSize: { width: 610, height: 325 } }, function(err) {
+          console.log(gameStatus.id + ".png Saved");
+        });
+
       }
 
       // return

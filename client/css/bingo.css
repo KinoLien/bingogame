@@ -290,6 +290,11 @@ select {-moz-appearance: none;  text-indent: 0.01px; text-overflow: '';}
 .pop_result .shareBox a.fb:hover{ background: url(../images/share_icon_fb_in.png) center center no-repeat; background-size: contain;}
 .pop_result .shareBox a.ig:hover{ background: url(../images/share_icon_ig_in.png) center center no-repeat; background-size: contain;}
 .pop_result .shareBox a.tt:hover{ background: url(../images/share_icon_tt_in.png) center center no-repeat; background-size: contain;}
+.pop_result p.result_msg{ text-align: center; border-top: 1px dashed #e0e0e0; }
+
+.pop_loading{ width: 100%; height: 100vh; background-color: rgba(0,0,0,.50); position: fixed; top: 0; z-index: 980; }
+.pop_loading_body{ position: relative; width: 50px; height: 50px; top:50%; left:50%; }
+.pop_loading_inner{ position: absolute; width: 100%; height: 100%; top:-50%; left:-50%; background: url(../images/br_loading.gif) center center no-repeat; background-size: contain; }
 
 @media (max-width:1000px){.pop_info .QBox{max-width: 78%;padding: 50px 5%;}}
 @media (max-width:660px){ .pop_info .QBox ul.answerBox li.aBox p{ width: 90%; }}
@@ -312,3 +317,9 @@ select {-moz-appearance: none;  text-indent: 0.01px; text-overflow: '';}
   .pop_result .resultBox p.topTitle{ background-position: center; }}
 
 
+.PrizeBoxEnd .QBox{ max-width: 600px; margin: 0; padding: 30px 0 0 0; min-height: 285px;  background: url(../images/br_gift.jpg) center center no-repeat #343436; background-size: contain; border: 5px solid #dddddd; border-radius: 55px;}
+.PrizeBoxEnd .QBox .PrizeBox{ padding-top: 65px; }
+.PrizeBoxEnd .QBox .PrizeBox p{ text-align: center; line-height: initial;}
+.PrizeBoxEnd .QBox .PrizeBox p.userName{ font-size: 25px; }
+.PrizeBoxEnd .QBox .PrizeBox p.thePrize { font-size: 50px; color: #fff337; padding-bottom: 10px;}
+.PrizeBoxEnd .QBox .PrizeBox p.answerNb{ font-size: 20px; color: #cccccc;}

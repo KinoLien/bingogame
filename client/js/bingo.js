@@ -34,13 +34,21 @@ function randomItem(items){
 
     var resultRegion = Handlebars.compile( $("#tplResult").html() );
 
+    gameState.loading = function(loaded){
+        if(loaded === true) $("#loadingBox").hide();
+        else $("#loadingBox").show();
+    };
+
     gameState.beforeLogin = function(){
+        this.loading(true);
+        $("#loadingBox").hide();
         $(".loginBeforeBox").show();
         $(".loginAfterBox").hide();
         $(".userBox p").hide();
     };
 
     gameState.afterLogin = function(profile){
+        this.loading(true);
         $(".loginBeforeBox").hide();
         $(".loginAfterBox").show(); 
         $(".userBox p").show();
@@ -149,9 +157,28 @@ function randomItem(items){
     };
 
     gameState.showResult = function(callbackData){
+        var next = callbackData.navigate;
+        var modal = this.panelModal;
+
+        if(next) modal.setNextTask(next);
+        else modal.removeNextTash();
+
+        modal.render({
+            content: resultRegion( callbackData ),
+            events: [
+                { selector: ".ok", event: "click", toClose: true }
+            ]
+        });
+
+        setTimeout(function(){ modal.open(); }, 500);
+    };
+
+    gameState.showResultAndInput = function(callbackData){
         var nextTask = callbackData.navigate;
 
         var modal = this.panelModal;
+
+        callbackData.showInput = 1;
 
         modal.render({
             content: resultRegion( callbackData ),
@@ -172,8 +199,29 @@ function randomItem(items){
     };
 
     gameState.emit = function(event, data){
-        if(socketInstance){
+        if(socketInstance && event){
+            this.loading();
             socketInstance.emit('req_' + event, data);
+        }
+    };
+
+    gameState.changeStatus = function(callbackData){
+        var status = callbackData.status;
+        var next = callbackData.navigate;
+        var btnEl = $(".btnStart");
+        switch(status){
+            case "end":
+                log("You can not play anymore.");
+                gameState.showResult(callbackData);
+                btnEl.off("click").on("click", function(){ gameState.showResult(callbackData); });
+                break;
+            case "locked":
+                log("=== Enter name and address OR continue ===");
+            case "playing":
+                log("=== is Can be Continue playing ===");
+            default:
+                btnEl.click(function(){ gameState.emit(next); btnEl.remove(); });
+                break;
         }
     };
 
@@ -211,9 +259,11 @@ function randomItem(items){
             setNextTask: function(taskName, data){
                 this.nextTask = { task: taskName, data: data };
             },
+            removeNextTash: function(){ this.nextTask = null; },
             open: function(){
                 var scope = this;
                 if(scope.beforeOpen) scope.beforeOpen();
+                gameState.loading(true);
                 $(openSelector).fadeIn({
                     complete: function(){
                         if(scope.afterOpen) scope.afterOpen();
@@ -306,40 +356,21 @@ function init_socket(uid){
     socketInstance.on('connect', function(msg){
         log("Socket connected");
         log("Do req_start");
-        socketInstance.emit('req_start', { loginFrom: "FB" });
+        gameState.emit('start', { loginFrom: "FB", name: currentName });
     });    
 
     //////////////////////////
     // Binding Events
     //////////////////////////
     socketInstance.on('res_start', function(data){
+        gameState.loading(true);
         log("Game Screen Show");
         gameState.refreshBlocks(data.allBlocks);
         
         var status = data.status;
         log("current status: " + status);
         log("output current score lines and earns");
-        switch(status){
-            case "end":
-                log("You can not play anymore.");
-                break;
-            case "locked":
-                log("=== Enter name and address OR continue ===");
-                next(function(){
-                    var stamp = (new Date()).getTime();
-                    var items = [
-                        {}, { name: "testname-" + stamp, address: "testaddress-" + stamp }
-                    ];
-                    socketInstance.emit('req_' + data.navigate, randomItem(items) );
-                });
-                break;
-            case "playing":
-            default:
-                next(function(){
-                    socketInstance.emit('req_' + data.navigate, {});
-                });
-                break;
-        }
+        gameState.changeStatus(data);
     });
 
     socketInstance.on('res_check_blocks', function(data){
@@ -359,6 +390,8 @@ function init_socket(uid){
     });
 
     socketInstance.on('res_next_block_question', function(data){
+        // force disable loading.
+        gameState.loading(true);
         log("res Next block call back");
         log("Wait for animation stop");
         gameState.blockAnimate.stop(6, function(){
@@ -404,7 +437,7 @@ function init_socket(uid){
             data.name = currentName;
             data.email = currentEmail;
 
-            gameState.showResult(data);
+            gameState.showResultAndInput(data);
 
         }else{
             gameState.emit(data.navigate);
@@ -415,12 +448,11 @@ function init_socket(uid){
     // data.navigate
     socketInstance.on('res_end', function(data){
         if(data.toEnd){
+            gameState.loading(true);
             log("=== THE END ===");
         }else{
             log("Continue to play");
-            next(function(){
-                socketInstance.emit('req_' + data.navigate, {});
-            });
+            gameState.emit(data.navigate);
         }
     });
 

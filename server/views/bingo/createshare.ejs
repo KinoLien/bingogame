@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta http-equiv="Cache-Control" content="no-store, no-cache, max-age=0" />
+<meta http-equiv="Pragma" content="no-cache"/>
+<meta http-equiv='Content-Language' content='zh-TW' />
+
+<link href="https://fonts.googleapis.com/css?family=Nunito" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css?family=Bitter" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css?family=Shrikhand" rel="stylesheet">
+<link rel="stylesheet" href="/client/css/bingo.css">
+</head>
+
+<body style="background:transparent;">
+
+<div class="pop_info PrizeBoxEnd" style="top:0px;">
+    <div class="QBox">
+        <div class="PrizeBox">
+            <p class="userName">恭喜 <%= name %> 獲得</p>
+            <p class="thePrize"><%= gift %></p>
+            <p class="answerNb">總答題數：<%= correctCount %>   連線數：<%= lineCount %></p>
+        </div>
+    </div>
+</div>
+
+</html>

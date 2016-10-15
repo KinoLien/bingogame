@@ -58,12 +58,16 @@
 			<div class="answerBox resultBox">
 		        <p class="topTitle">成績結算</p>
 		        <p class="good_a result">答對<span>{{ correctCount }}</span>題  連線數<span>{{ lineCount }}</span></p>
+		        {{#if (equal showInput 1)}}
 		        <ul class="userFillBox">
 		        	<form id="resultForm">
 			            <li class="clearfix"><p>姓名</p><input type="text" name="name" value="{{ name }}"></li>
 			            <li class="clearfix"><p>e-mail</p><input type="email" name="address" value="{{ email }}"></li>
 		            </form>
 		        </ul>
+		        {{else}}
+		        <p class="good_a result_msg">你已經玩過囉！</p>
+		        {{/if}}
 		        <div class="btn_w_line">
 		            <button class="ok">完成</button>
 		        </div>
@@ -71,8 +75,10 @@
 		    <div class="shareBox clearfix">
 		        <p>分享結果至</p>
 		        <a class="fb" href="#">
+		        <!--
 		        <a class="ig" href="#">
 		        <a class="tt" href="#">
+		        -->
 		    </div>
 		</div>
     </section>

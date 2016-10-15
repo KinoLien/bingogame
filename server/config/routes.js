@@ -28,7 +28,7 @@ function isLoggedIn(req, res, next) {
 module.exports = function(app, passport) {
 
   // =====================================
-  // GAME ===============================
+  // GAME ================================
   // =====================================
   app.get('/', function(req, res, next){
     res.render(path.resolve(__dirname, '../', 'views/bingo/index.ejs'));
@@ -40,13 +40,28 @@ module.exports = function(app, passport) {
     res.sendFile(path.resolve(__dirname, '../../client', type, name));
   });
 
-  app.get('/uploads/:name', function(req, res, next) {
+  app.get('/share/:name', function(req, res, next) {
     var name = req.params.name;
-    res.sendFile(path.resolve(__dirname, '../../uploads', type, name));
+    res.sendFile(path.resolve(__dirname, '../../uploads', name + '.png'));
   });
 
   // =====================================
-  // CONSOLE ===============================
+  // API =================================
+  // =====================================
+  app.get('/createshare/:name/:gift/:count/:line', function(req, res, next){
+    var ip = req.headers['x-forwarded-for'] || req.connection.remoteAddress;
+    if(ip.search("127.0.0.1") >= 0 || ip.search("0.0.0.0") >= 0){
+      res.render(path.resolve(__dirname, '../', 'views/bingo/createshare.ejs'), {
+        name: decodeURIComponent(req.params.name),
+        gift: decodeURIComponent(req.params.gift),
+        correctCount: req.params.count,
+        lineCount: req.params.line
+      } );
+    }
+  });
+
+  // =====================================
+  // CONSOLE =============================
   // =====================================
   app.get('/console', isLoggedIn, function (req, res, next) {
     res.render(path.resolve(__dirname, '../', 'views/console/index.ejs'));
@@ -87,29 +102,4 @@ module.exports = function(app, passport) {
       res.redirect('/console');
   });
 
-  // app.get('/clientChangePath/:project', function (req, res, next) {
-  //   var project = req.params.project;
-  //   res.sendFile(path.resolve(__dirname, '../../client', project));
-  // });
-
-  // app.get('/', function(req, res) {
-  //   var drinks = [
-  //       { name: 'Bloody Mary', drunkness: 3 },
-  //       { name: 'Martini', drunkness: 5 },
-  //       { name: 'Scotch', drunkness: 10 }
-  //   ];
-  //   var tagline = "Any code of your own that you haven't looked at for six or more months might as well have been written by someone else.";
-
-  //   res.render('pages/index', {
-  //       drinks: drinks,
-  //       tagline: tagline
-  //   });
-  // });
-
-  // This is where the magic happens. We take the locals data we have already
-  // fetched and seed our stores with data.
-  // App is a function that requires store data and url to initialize and return the React-rendered html string
-  // app.get('*', function (req, res, next) {
-  //   App.default(req, res);
-  // });
 };
