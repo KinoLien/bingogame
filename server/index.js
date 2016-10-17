@@ -42,6 +42,6 @@ require('./config/routes')(app, passport);
 var server = http.createServer(app).listen(app.get('port'));
 
 // socket init
-// var environment = require('./config/environment.js');
-// var io = environment.loadSocketIo(server);
-// environment.authorize(io);
+var environment = require('./config/environment.js');
+var io = environment.loadSocketIo(server);
+environment.authorize(io);

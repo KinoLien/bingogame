@@ -157,6 +157,9 @@ module.exports = function (socket, io) {
         // update count
         gameStatus.correctCount = getBlockCorrectCount.call(gameStatus);
 
+        // get current earn
+        gameStatus.currentEarn = res.giftContent || "";
+
         switch(res.status){
           case "end":
             gameStatus.currentAction = "end";
@@ -179,7 +182,8 @@ module.exports = function (socket, io) {
           allBlocks: gameStatus.blocks, 
           navigate: navigate,
           lineCount: gameStatus.maxlines,
-          correctCount: gameStatus.correctCount
+          correctCount: gameStatus.correctCount,
+          giftContent: gameStatus.currentEarn
         });
       }
     });
@@ -300,21 +304,19 @@ module.exports = function (socket, io) {
       service.earnGiftAndUpdatePlayer({
         id: gameStatus.player_id,
         lines: gameStatus.maxlines,
+        current: gameStatus.currentEarn,
         status: "locked"
       }).then(function(res){
         var data = {};
+
         if(res && gameStatus.currentEarn != res.type){
           gameStatus.currentEarn = res.type;
-          data.hasGift = true;  
-          data.giftContent = res.type;
-          data.navigate = "show_result";
-          data.lineCount = gameStatus.maxlines;
-          data.correctCount = gameStatus.correctCount;
-        }else{
-          gameStatus.currentAction = "answer_question";
-          data.hasGift = false; 
-          data.navigate = "check_blocks"; 
+          data.hasGift = true;
         }
+        data.navigate = "show_result";
+        data.lineCount = gameStatus.maxlines;
+        data.correctCount = gameStatus.correctCount;
+        data.giftContent = gameStatus.currentEarn;
         
         // return
         socket.emit('res_check_gift', data);  
@@ -337,6 +339,7 @@ module.exports = function (socket, io) {
         data.navigate = "end";
         data.lineCount = gameStatus.maxlines;
         data.correctCount = gameStatus.correctCount;
+        data.giftContent = gameStatus.currentEarn;
 
         // Do create image for sharing.
         var baseUrl = isDev? 'http://127.0.0.1:5000': 'http://127.0.0.1';

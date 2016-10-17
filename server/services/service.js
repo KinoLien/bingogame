@@ -173,6 +173,17 @@ exports.updateGift = function(body){
       
 };
 
+// { playerID: '1' }
+exports.removePlayer = function(body){
+  var id = parseInt(body.playerID);
+  var promises = [
+    Bookshelf.knex('players').where('id',id).del(),
+    Bookshelf.knex('answerlogs').where('p_id',id).del()
+  ];
+  return Promise.all(promises);
+};
+
+
 ////////////////////////////////////////
 // CALL FROM SOCKETS
 ////////////////////////////////////////
@@ -204,13 +215,12 @@ exports.getOrCreatePlayer = function(unique_id, from){
       if(results.length > 0){
         // found
         var user = results[0];
-        return new Promise(function(resolve, reject) {
+        return Promise.all([
+          Bookshelf.knex('gifts').where('id',user.g_id).select('*')
+            .then(function(gift){ if(gift && gift.length > 0) user.giftContent = gift[0].type; }),
           Bookshelf.knex('answerlogs').where('p_id', user.id).orderBy('created_at','desc').select('*')
-            .then(function(logs){
-              user.answerlogs = logs;
-              resolve(user);
-            });
-        });
+            .then(function(logs){ user.answerlogs = logs; })
+        ]).then(function(){ return user; });
       }else{
         // not found
         return Players.forge().create({ unique_id: unique_id, g_id: 0, from: from });
@@ -237,6 +247,7 @@ exports.earnGiftAndUpdatePlayer = function(opts){
   var id = opts.id;
   var lines = opts.lines;
   var status = opts.status;
+  var current = opts.current;
   var scope = this;
   return this.getRemainGifts().then(function(res){
     return _.map(res, function(item){ return item.id; });
@@ -250,7 +261,13 @@ exports.earnGiftAndUpdatePlayer = function(opts){
     if(results && results.length){
       var maps = _.groupBy(results, function(item){ return item.earn_condition; });
       var maxKey = _.maxBy(Object.keys(maps), function(item){ return parseInt(item); });
-      return _.sample(maps[maxKey]);
+      var mapItems = maps[maxKey];
+
+      if(current && _.find(mapItems, { type: current } )){
+        return null;
+      }else{
+        return _.sample(mapItems);
+      }
     }else return null;
   }).then(function(gift){
     if(gift){

@@ -34,6 +34,19 @@ function randomItem(items){
 
     var resultRegion = Handlebars.compile( $("#tplResult").html() );
 
+    gameState.share = function(){
+        if(window.FB){
+            window.FB.ui({
+                method: 'share',
+                display: 'popup',
+                href: location.href,
+                picture: 'http://' + location.host + '/share/' + window.FB.getUserID(),
+                caption: '性連性 賓果得獎金'
+                // description: ''
+            }, function(response){});
+        }
+    };
+
     gameState.loading = function(loaded){
         if(loaded === true) $("#loadingBox").hide();
         else $("#loadingBox").show();
@@ -45,6 +58,7 @@ function randomItem(items){
         $(".loginBeforeBox").show();
         $(".loginAfterBox").hide();
         $(".userBox p").hide();
+        $(".btnStart").hide();
     };
 
     gameState.afterLogin = function(profile){
@@ -53,6 +67,7 @@ function randomItem(items){
         $(".loginAfterBox").show(); 
         $(".userBox p").show();
         $("#strUserName").text(profile.name);
+        $(".btnStart").show();
     };
 
     gameState.refreshBlocks = function(blocks){
@@ -163,10 +178,13 @@ function randomItem(items){
         if(next) modal.setNextTask(next);
         else modal.removeNextTash();
 
+        callbackData.hasGift = callbackData.giftContent? 1 : 0;
+
         modal.render({
             content: resultRegion( callbackData ),
             events: [
-                { selector: ".ok", event: "click", toClose: true }
+                { selector: ".ok", event: "click", toClose: true },
+                { selector: ".shareBox .fb", event: "click", fn: function(){ gameState.share(); } }
             ]
         });
 
@@ -178,6 +196,7 @@ function randomItem(items){
 
         var modal = this.panelModal;
 
+        callbackData.hasGift = callbackData.giftContent? 1 : 0;
         callbackData.showInput = 1;
 
         modal.render({
@@ -191,7 +210,8 @@ function randomItem(items){
                     });
 
                     modal.setNextTask(nextTask, data);
-                } }
+                } },
+                { selector: ".shareBox .fb", event: "click", fn: function(){ gameState.share(); } }
             ]
         });
 
@@ -409,6 +429,8 @@ function init_socket(uid){
 
         var xy = data.block;
 
+        if(data.explain) data.hasExplain = 1;
+
         gameState.markAnswer(xy.x, xy.y, data.correct);
 
         gameState.showAnswer(data);
@@ -419,13 +441,11 @@ function init_socket(uid){
         if(data.hasGift){
             log("You Earned: " + data.giftContent);
             log("=== Enter name and address OR continue ===");
-
-            gameState.showScore(data);
-
+            data.isNew = 1;
         }else{
             log("No new gift");
-            gameState.emit(data.navigate);
         }
+        gameState.showScore(data);
     });
 
     socketInstance.on('res_show_result', function(data){
@@ -463,11 +483,12 @@ function init_socket(uid){
 
 window.fbAsyncInit = function() {
     FB.init({
-      appId      : '1264295200261116',
-      // cookie     : true,
-      status     : true,
-      xfbml      : true,
-      version    : 'v2.7'
+        appId      : '1264290230261613',
+        // appId      : '1264295200261116',   // dev
+        cookie     : true,
+        status     : true,
+        xfbml      : true,
+        version    : 'v2.7'
     });
 
     checkLoginState();
@@ -523,6 +544,10 @@ function checkLoginState() {
     FB.getLoginStatus(function(response) {
         statusChangeCallback(response);
     });
+}
+
+function fb_logout(){
+    FB.logout(function(){ location.reload(); });
 }
 
 function fb_login(){

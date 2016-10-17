@@ -106,7 +106,6 @@ body{ background: url(../images/br_00.jpg) center top repeat; background-size: c
 .gameBox .leftBox25 p.loginBox a.fb:hover{ background-color: #5680e2; }
 .gameBox .leftBox25 p.loginBox a.google:hover{ background-color: #ff4040; }
 
-
 .gameBox .leftBox25 .loginAfterBox{ width: 100%; position: relative;}
 .gameBox .leftBox25 .loginAfterBox p.topic{ position: absolute; left: 40px; top: -10px; text-indent: -9999px; width: 80px; height: 45px; display: block; background: url(../images/topic.png) center center no-repeat; background-size: contain;}
 
@@ -130,6 +129,12 @@ body{ background: url(../images/br_00.jpg) center top repeat; background-size: c
 .gameBox .GameExplanation .userBox{ width: 100%; height: 130px;}
 .gameBox .GameExplanation .userBox p{ font-size: 20px; color: #fff; text-align: center; padding-top: 60px; }
 .gameBox .GameExplanation .userBox p span{ color: #f2eb27; text-decoration: underline; }
+
+.gameBox .GameExplanation .userBox p.logoutBox{ width:80px; font-size: 15px; font-weight: bold; margin: 0 auto; padding: 0; text-align: center; }
+.gameBox .GameExplanation .userBox p.logoutBox a{ line-height:30px; color: #fff; width: 100%; display: block; border-radius: 10px;}
+.gameBox .GameExplanation .userBox p.logoutBox a.fb{ background: url(../images/icon_fb.png) center left no-repeat #4d70c1; background-size: contain; }
+.gameBox .GameExplanation .userBox p.logoutBox a.fb:hover{ background-color: #5680e2; }
+.gameBox .GameExplanation .userBox p.logoutBox a.fb span{ color: #fff; padding-left: 18px; text-decoration: none;}
 
 .gameBox .GameExplanation p.title_ex{ width: 100%; max-width: 300px; height: 100px; display: block; background: url(../images/r_top_title.png) center center no-repeat; background-size: contain; text-indent: -9999px; margin-bottom: 40px;}
 .gameBox .GameExplanation p.game_title{ width: 100px; height: 36px; display: block; text-indent: -9999px; margin-bottom: 5px; }
@@ -262,7 +267,8 @@ select {-moz-appearance: none;  text-indent: 0.01px; text-overflow: '';}
 .pop_info .QBox .answerBox p.Congratulation{ color: #ffee2e; background-image: url(../images/icon_Congratulation.png);}
 .pop_info .QBox .answerBox p.wrong{ color: #ffee2e; background-image: url(../images/icon_wrong.png);}
 .pop_info .QBox .answerBox p.good_a{ width: 100%; font-size: 20px; color: #fff; line-height: 28px; padding: 30px 0;}
-.pop_info .QBox .answerBox p.good_a span{ color: #ffee2e; }
+.pop_info .QBox .answerBox p.good_b{ text-align: center; width: 100%; font-size: 20px; color: #fff; line-height: 28px; padding-bottom: 30px;}
+.pop_info .QBox .answerBox p.good_a span, .pop_info .QBox .answerBox p.good_b span{ color: #ffee2e; }
 .pop_info .QBox .answerBox p.result{ text-align: center; padding: 60px 0 30px 0;}
 .pop_info .QBox .answerBox p.result span{ font-size: 70px; font-weight: bold; padding: 0 5px;}
 .pop_result .QBox{ max-width: 480px; }
@@ -290,7 +296,6 @@ select {-moz-appearance: none;  text-indent: 0.01px; text-overflow: '';}
 .pop_result .shareBox a.fb:hover{ background: url(../images/share_icon_fb_in.png) center center no-repeat; background-size: contain;}
 .pop_result .shareBox a.ig:hover{ background: url(../images/share_icon_ig_in.png) center center no-repeat; background-size: contain;}
 .pop_result .shareBox a.tt:hover{ background: url(../images/share_icon_tt_in.png) center center no-repeat; background-size: contain;}
-.pop_result p.result_msg{ text-align: center; border-top: 1px dashed #e0e0e0; }
 
 .pop_loading{ width: 100%; height: 100vh; background-color: rgba(0,0,0,.50); position: fixed; top: 0; z-index: 980; }
 .pop_loading_body{ position: relative; width: 50px; height: 50px; top:50%; left:50%; }
@@ -299,7 +304,7 @@ select {-moz-appearance: none;  text-indent: 0.01px; text-overflow: '';}
 @media (max-width:1000px){.pop_info .QBox{max-width: 78%;padding: 50px 5%;}}
 @media (max-width:660px){ .pop_info .QBox ul.answerBox li.aBox p{ width: 90%; }}
 @media (max-width:599px){.pop_info .QBox h3.theme{ font-size: 18px; line-height: 25px;}
-  .pop_info .QBox ul.answerBox li.aBox p, .pop_info .QBox .answerBox p.good_a{ font-size: 16px; }
+  .pop_info .QBox ul.answerBox li.aBox p, .pop_info .QBox .answerBox p.good_a, .pop_info .QBox .answerBox p.good_b{ font-size: 16px; }
   .pop_result ul.userFillBox li p{ width: 100%; text-align: center; padding: 10px 0; }
   .pop_result ul.userFillBox li input{ width: 90%; }}
 @media (max-width:499px){.pop_info .QBox ul.answerBox li.aBox p{ width: 88%; }

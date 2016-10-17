@@ -83,7 +83,7 @@ module.exports = function(app, passport) {
   });
 
   // CRUD
-  app.post('/console/:type(question|gift)/:action(add|update)', isLoggedIn, function(req, res, next){
+  app.post('/console/:type(question|gift|player)/:action(add|update|remove)', isLoggedIn, function(req, res, next){
     var type = req.params.type;
     var action = req.params.action;
     convertType = type[0].toUpperCase() + type.slice(1);
