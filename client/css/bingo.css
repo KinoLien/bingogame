@@ -234,7 +234,7 @@ select {-moz-appearance: none;  text-indent: 0.01px; text-overflow: '';}
 :root .styled-select select option{ background-color:#fff\9\0; padding:5px 0\9\0;}
 
 
-.pop_bk{ width: 100%; height: 100%; background-color: rgba(0,0,0,.50); position: absolute; top: 0; z-index: 980;}
+.pop_bk{ width: 100%; height: 100%; background-color: rgba(0,0,0,.50); position: absolute; top: 0; z-index: 980; opacity: 0; display: none; }
 
 .pop_close{ cursor: pointer; position: absolute; ; top: -25px; right: -25px; width: 37px; height: 37px; z-index: 1000; display: block; background: url(../images/the_pop_btn_close.png) center center no-repeat; background-size: contain;}
 .pop_close:hover{ opacity: .9; }

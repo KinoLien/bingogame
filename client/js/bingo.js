@@ -284,22 +284,21 @@ function randomItem(items){
                 var scope = this;
                 if(scope.beforeOpen) scope.beforeOpen();
                 gameState.loading(true);
-                $(openSelector).fadeIn({
-                    complete: function(){
-                        if(scope.afterOpen) scope.afterOpen();
-                    }
-                });
+                $(openSelector).css("display", "block");
+                setTimeout(function(){ $(openSelector).css("opacity", 1); }, 100);
+                setTimeout(function(){ if(scope.afterOpen) scope.afterOpen(); }, 500);
             },
             close: function(){
                 var scope = this;
                 if(scope.beforeClose) scope.beforeClose();
-                $(openSelector).fadeOut({
-                    complete: function(){
-                        if(scope.afterClose) scope.afterClose();
-                        if(scope.nextTask) gameState.emit(scope.nextTask.task, scope.nextTask.data);
-                        $(renderSelector).html("");
-                    }
-                });
+
+                $(openSelector).css("opacity", 0);
+                setTimeout(function(){
+                    $(openSelector).css("display", "");
+                    if(scope.afterClose) scope.afterClose();
+                    if(scope.nextTask) gameState.emit(scope.nextTask.task, scope.nextTask.data);
+                    $(renderSelector).html("");
+                }, 500);
             }
         };
     })();
