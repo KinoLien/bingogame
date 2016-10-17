@@ -266,8 +266,8 @@ select {-moz-appearance: none;  text-indent: 0.01px; text-overflow: '';}
 .pop_info .QBox .answerBox p.title_icon{ font-size: 22px; color: #4aff70; text-align: center; padding-top: 100px; background: url(../images/icon_right.png) center center no-repeat ; background-size: contain;}
 .pop_info .QBox .answerBox p.Congratulation{ color: #ffee2e; background-image: url(../images/icon_Congratulation.png);}
 .pop_info .QBox .answerBox p.wrong{ color: #ffee2e; background-image: url(../images/icon_wrong.png);}
-.pop_info .QBox .answerBox p.good_a{ width: 100%; font-size: 20px; color: #fff; line-height: 28px; padding: 30px 0;}
-.pop_info .QBox .answerBox p.good_b{ text-align: center; width: 100%; font-size: 20px; color: #fff; line-height: 28px; padding-bottom: 30px;}
+.pop_info .QBox .answerBox p.good_a{ white-space: pre-line; width: 100%; font-size: 20px; color: #fff; line-height: 28px; padding: 30px 0;}
+.pop_info .QBox .answerBox p.good_b{ white-space: pre-line; text-align: center; width: 100%; font-size: 20px; color: #fff; line-height: 28px; padding-bottom: 30px;}
 .pop_info .QBox .answerBox p.good_a span, .pop_info .QBox .answerBox p.good_b span{ color: #ffee2e; }
 .pop_info .QBox .answerBox p.result{ text-align: center; padding: 60px 0 30px 0;}
 .pop_info .QBox .answerBox p.result span{ font-size: 70px; font-weight: bold; padding: 0 5px;}
