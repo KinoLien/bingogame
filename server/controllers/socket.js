@@ -223,6 +223,7 @@ module.exports = function (socket, io) {
     data.block = gameStatus.currentBlock;
     data.navigate = "check_blocks";
     if(validRules.call(gameStatus, 'answer_question')){
+      gameStatus.answeredQues.push(id);
       service.getExplainAndCheckAnswer(id, answer_id).then(function(res){
         // id, block, correct:boolean
         data.correct = res.correct;
@@ -352,13 +353,10 @@ module.exports = function (socket, io) {
           encodeURIComponent(gameStatus.currentEarn), 
           data.correctCount, data.lineCount
         ].join('/');
-        console.log("createurl: " + createUrl);
-        var targetPath = path.resolve(__dirname, '../../uploads/' + gameStatus.id + '.png');
-        webshot(createUrl, targetPath, { shotSize: { width: 610, height: 325 } }, function(err) {
+        webshot(createUrl, path.resolve(__dirname, '../../uploads/' + gameStatus.id + '.png'), { shotSize: { width: 610, height: 325 } }, function(err) {
           if(err) console.log(err);
           else console.log(gameStatus.id + ".png Saved");
         });
-
       }
 
       // return
