@@ -5,6 +5,8 @@ var service = require('../services/service');
 
 var webshot = require('webshot');
 
+var path = require('path');
+
 var isDev = process.env.NODE_ENV === 'development';
 
 var _ = require('lodash');
@@ -107,12 +109,14 @@ module.exports = function (socket, io) {
 
   var gameStatus = {};
 
-  socket._cacheEmit = socket.emit;
-  socket.emit = function(){
-    console.log(gameStatus);
-    socket._cacheEmit.apply(this, arguments);
-  };
-
+  if(isDev){
+    socket._cacheEmit = socket.emit;
+    socket.emit = function(){
+      console.log(gameStatus);
+      socket._cacheEmit.apply(this, arguments);
+    };
+  }
+  
   socket.on('req_start', function(message){
     // cache the socket.unique_id
     var id = socket.unique_id;
@@ -349,7 +353,8 @@ module.exports = function (socket, io) {
           encodeURIComponent(gameStatus.currentEarn), 
           data.correctCount, data.lineCount
         ].join('/');
-        webshot(createUrl, 'uploads/' + gameStatus.id + '.png', { shotSize: { width: 610, height: 325 } }, function(err) {
+        console.log("createurl: " + createUrl);
+        webshot(createUrl, path.resolve(__dirname, '../../uploads/' + gameStatus.id + '.png'), { shotSize: { width: 610, height: 325 } }, function(err) {
           console.log(gameStatus.id + ".png Saved");
         });
 

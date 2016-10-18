@@ -50,6 +50,7 @@ module.exports = function(app, passport) {
   // =====================================
   app.get('/createshare/:name/:gift/:count/:line', function(req, res, next){
     var ip = req.headers['x-forwarded-for'] || req.connection.remoteAddress;
+    console.log("ip: " + ip);
     if(ip.search("127.0.0.1") >= 0 || ip.search("0.0.0.0") >= 0){
       res.render(path.resolve(__dirname, '../', 'views/bingo/createshare.ejs'), {
         name: decodeURIComponent(req.params.name),
