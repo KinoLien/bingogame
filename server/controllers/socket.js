@@ -60,7 +60,6 @@ function getNextValidBlock() {
       if(blocks[i][j] == 0) res.push([i,j]);
     }
   }
-  console.log(res);
   if(res.length){
     var xy = _.sample(res);
     return { x: xy[0], y: xy[1] };
@@ -354,8 +353,10 @@ module.exports = function (socket, io) {
           data.correctCount, data.lineCount
         ].join('/');
         console.log("createurl: " + createUrl);
-        webshot(createUrl, path.resolve(__dirname, '../../uploads/' + gameStatus.id + '.png'), { shotSize: { width: 610, height: 325 } }, function(err) {
-          console.log(gameStatus.id + ".png Saved");
+        var targetPath = path.resolve(__dirname, '../../uploads/' + gameStatus.id + '.png');
+        webshot(createUrl, targetPath, { shotSize: { width: 610, height: 325 } }, function(err) {
+          if(err) console.log(err);
+          else console.log(gameStatus.id + ".png Saved");
         });
 
       }
