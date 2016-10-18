@@ -110,9 +110,17 @@ function randomItem(items){
             events: [
                 { selector: ".ok", event: "click", toClose:true }
             ],
+            beforeOpen: function(){
+                $(this.baseSelector).find("li.aBox .s_radio, li.aBox p label").click(function(e){
+                    // if e.originalEvent.path [0] is input[type=radio]
+                    var rd = $(this).parents("li.aBox").find("input[type=radio]");
+                    var isChecked = $(rd).prop('checked');
+                    $(rd).prop('checked', !isChecked);
+                });
+            },
             afterOpen: function(){
                 // start counting
-                var countingEl = $("#popupBox .QBox .time");
+                var countingEl = $(this.baseSelector).find(".QBox .time");
                 var startFrom = parseInt(countingEl.text());
                 downCountInterval = setInterval(function(){
                     countingEl.text(--startFrom);
@@ -249,6 +257,7 @@ function randomItem(items){
         var renderSelector = "#popupBox";
         var openSelector = "#popupBox";
         return {
+            baseSelector: openSelector,
             render: function(prop){
                 var content = prop.content;
                 var events = prop.events;
