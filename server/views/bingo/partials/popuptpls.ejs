@@ -65,16 +65,16 @@
 		        <p class="good_a result">答對<span>{{ correctCount }}</span>題  連線數<span>{{ lineCount }}</span></p>
 		        <ul class="userFillBox">
 		        	{{#if (equal hasGift 1)}}
-		        	<p class="good_b">您的獎品是 <span>{{ giftContent }}</span> </p>
+		        	<p class="good_b">感謝您的參與。您的獎品是 <span>{{ giftContent }}</span> </p>
+		        	{{else}}
+		        	<p class="good_b">您的成績無法獲得獎品或獎品已發放完畢。謝謝您的參與。</p>
 		        	{{/if}}
 		        	{{#if (equal showInput 1)}}
-		        	<form id="resultForm">
-			            <li class="clearfix"><p>姓名</p><input type="text" name="name" value=""></li>
-			            <li class="clearfix"><p>地址</p><input type="text" name="address" value=""></li>
-		            </form>
-		            {{else}}
-		            <p class="good_b">你已經玩過囉！</p>
-		        	{{/if}}
+		            <p class="good_b">
+		            	<a class="fillForm" href="https://docs.google.com/forms/d/e/1FAIpQLSd4-kgDV4yMOCtEqzrIxzWy7VlR-Ct46dtNx7TZcLdtWP5qTQ/viewform?entry.1546575812={{ fbid }}" target="_blank"><span>填寫資料</span></a>
+		            請點選上方填寫資料按鈕，並填入正確的姓名及地址，讓我們方便掛號寄送獎品哦！
+		            </p>
+		            {{/if}}
 		        </ul>
 		        
 		        <div class="btn_w_line">

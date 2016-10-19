@@ -18,9 +18,16 @@
 <div class="pop_info PrizeBoxEnd" style="top:0px;">
     <div class="QBox">
         <div class="PrizeBox">
+        	<% if (gift) { %>
             <p class="userName">恭喜 <%= name %> 獲得</p>
             <p class="thePrize"><%= gift %></p>
             <p class="answerNb">總答題數：<%= correctCount %>   連線數：<%= lineCount %></p>
+            <% } else { %>
+            <br/>
+            <p class="userName"> <%= name %> </p>
+            <br/><br/>
+            <p class="answerNb">總答題數：<%= correctCount %>   連線數：<%= lineCount %></p>
+            <% } %>
         </div>
     </div>
 </div>

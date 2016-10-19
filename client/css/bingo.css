@@ -95,7 +95,7 @@ body{ background: url(../images/br_00.jpg) center top repeat; background-size: c
 
 .gameBox { width: 100%; padding-top: 152px;}
 .gameBox .leftBox25{ width: 70%; float: left; display: block; background: url(../images/blackboard.png) center top no-repeat; background-size: contain;}
-.gameBox .leftBox25 .loginBeforeBox{ width: 100%; height: 740px; }
+.gameBox .leftBox25 .loginBeforeBox, .gameBox .leftBox25 .loginEndBox{ width: 100%; height: 740px; }
 
 .gameBox .leftBox25 h1.gameName{ width: 570px; height: 170px; text-indent: -9999px; display: block; background: url(../images/game_name.png) center center no-repeat; background-size: contain; margin: 0px auto; margin-top: 150px;}
 .gameBox .leftBox25 p.note{ font-size: 21px; color: #fff; text-align: center; font-weight: bold; margin: 50px auto; }
@@ -152,7 +152,7 @@ body{ background: url(../images/br_00.jpg) center top repeat; background-size: c
 @media (max-width:1455px){.ContentsBox{ width: 1200px;}
   .gameBox{ padding-top: 80px; }
   .gameBox .leftBox25 h1.gameName{ margin-top: 100px; }  
-  .gameBox .leftBox25 .loginBeforeBox{ height: 600px; }
+  .gameBox .leftBox25 .loginBeforeBox, .gameBox .leftBox25 .loginEndBox{ height: 600px; }
   .gameBox .leftBox25 .loginAfterBox ul li{ min-height: 105px;}
   .gameBox .leftBox25 .loginAfterBox ul li p{ font-size: 44px; line-height: 100px; }
   .gameBox .leftBox25 .loginAfterBox p.topic{height: 40px;}
@@ -163,7 +163,7 @@ body{ background: url(../images/br_00.jpg) center top repeat; background-size: c
   .gameBox .GameExplanation .userBox{ height: 65px; }
   .gameBox .GameExplanation .userBox p{padding-top: 20px; font-size: 18px;}
   .gameBox .leftBox25 h1.gameName{ margin-top: 50px; }
-  .gameBox .leftBox25 .loginBeforeBox{ height: 550px; }
+  .gameBox .leftBox25 .loginBeforeBox, .gameBox .leftBox25 .loginEndBox{ height: 550px; }
   .gameBox .leftBox25 .loginAfterBox ul li{ min-height: 88px;}
   .gameBox .leftBox25 .loginAfterBox ul li p{line-height: 85px; font-size: 34px;}
   .gameBox .GameExplanation p.title_ex{ margin-bottom: 20px; }
@@ -205,10 +205,10 @@ body{ background: url(../images/br_00.jpg) center top repeat; background-size: c
   .gameBox .leftBox25 p.loginBox{line-height: 40px;}
   .gameBox .leftBox25 p.loginBox a{height: 40px;}
   .gameBox .leftBox25 h1.gameName{height: 120px;}
-  .gameBox .leftBox25 .loginBeforeBox{height: 350px;}}
+  .gameBox .leftBox25 .loginBeforeBox, .gameBox .leftBox25 .loginEndBox{height: 350px;}}
 
 @media (max-width:320px){.ContentsBox{ width: 300px; }
-  .gameBox .leftBox25 .loginBeforeBox{height: 300px;}
+  .gameBox .leftBox25 .loginBeforeBox, .gameBox .leftBox25 .loginEndBox{height: 300px;}
   .gameBox .leftBox25 .loginAfterBox ul li p{font-size: 16px; line-height: 35px;}
   .gameBox .leftBox25 .loginAfterBox ul li{min-height: 35px;}
   .gameBox .leftBox25 .loginAfterBox .gridBox{background-position: 4px 17px;}
@@ -304,6 +304,9 @@ select {-moz-appearance: none;  text-indent: 0.01px; text-overflow: '';}
 .alignLeft { text-align: left !important; }
 ul.preinfo_list { margin-left: 20px; font-weight: bold; font-size: 20px; color: #fff; }
 ul.preinfo_list li{ display:list-item; list-style-type: circle; line-height: 28px; }
+
+a.fillForm{ border: 1px solid #e0e0e0; padding: 6px 3%; display: inline-block; width: 90px; margin: 0 auto; }
+a.fillForm:hover{ background-color: #666; }
 
 @media (max-width:1000px){.pop_info .QBox{max-width: 78%;padding: 50px 5%;}}
 @media (max-width:660px){ .pop_info .QBox ul.answerBox li.aBox p{ width: 90%; }}

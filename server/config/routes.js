@@ -54,7 +54,7 @@ module.exports = function(app, passport) {
     if(ip.search("127.0.0.1") >= 0 || ip.search("0.0.0.0") >= 0){
       res.render(path.resolve(__dirname, '../', 'views/bingo/createshare.ejs'), {
         name: decodeURIComponent(req.params.name),
-        gift: decodeURIComponent(req.params.gift),
+        gift: req.params.gift == "0"? false : decodeURIComponent(req.params.gift),
         correctCount: req.params.count,
         lineCount: req.params.line
       } );

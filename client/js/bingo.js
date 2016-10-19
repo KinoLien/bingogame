@@ -54,7 +54,6 @@ function randomItem(items){
 
     gameState.beforeLogin = function(){
         this.loading(true);
-        $("#loadingBox").hide();
         $(".loginBeforeBox").show();
         $(".loginAfterBox").hide();
         $(".userBox p").hide();
@@ -68,6 +67,14 @@ function randomItem(items){
         $(".userBox p").show();
         $("#strUserName").text(profile.name);
         $(".btnStart").show();
+    };
+
+    gameState.theEnd = function(){
+        $(".loginBeforeBox").hide();
+        $(".loginAfterBox").hide(); 
+        $(".loginEndBox").show();
+        $(".btnStart").hide();
+        $(".userBox p").hide();
     };
 
     gameState.refreshBlocks = function(blocks){
@@ -191,7 +198,7 @@ function randomItem(items){
         modal.render({
             content: resultRegion( callbackData ),
             events: [
-                { selector: ".ok", event: "click", toClose: true },
+                { selector: ".ok", event: "click", toClose: true, fn: function(){ gameState.theEnd(); }  },
                 { selector: ".shareBox .fb", event: "click", fn: function(){ gameState.share(); } }
             ]
         });
@@ -201,24 +208,21 @@ function randomItem(items){
 
     gameState.showResultAndInput = function(callbackData){
         var nextTask = callbackData.navigate;
-
         var modal = this.panelModal;
+
+        if(nextTask) modal.setNextTask(nextTask);
+        else modal.removeNextTash();
 
         callbackData.hasGift = callbackData.giftContent? 1 : 0;
         callbackData.showInput = 1;
+        callbackData.fbid = window.FB.getUserID();
 
         modal.render({
+            beforeOpen: function(){ this.hideElement(".ok"); },
             content: resultRegion( callbackData ),
             events: [
-                { selector: ".ok", event:"click", toClose:true, fn: function(){
-                    var data = {};
-
-                    $("#resultForm").serializeArray().forEach(function(item){
-                        data[item.name] = item.value;
-                    });
-
-                    modal.setNextTask(nextTask, data);
-                } },
+                { selector: "a.fillForm", event: "click", fn:function(){ gameState.panelModal.showElement(".ok"); } },
+                { selector: ".ok", event:"click", toClose:true, fn: function(){ gameState.theEnd(); } },
                 { selector: ".shareBox .fb", event: "click", fn: function(){ gameState.share(); } }
             ]
         });
@@ -248,7 +252,7 @@ function randomItem(items){
             case "playing":
                 log("=== is Can be Continue playing ===");
             default:
-                btnEl.click(function(){ gameState.emit(next); btnEl.remove(); });
+                btnEl.click(function(){ window.scrollTo(0,0); gameState.emit(next); btnEl.remove(); });
                 break;
         }
     };
@@ -258,6 +262,12 @@ function randomItem(items){
         var openSelector = "#popupBox";
         return {
             baseSelector: openSelector,
+            hideElement: function(selector){
+                $(openSelector).find(selector).hide();
+            },
+            showElement: function(selector){
+                $(openSelector).find(selector).show();
+            },
             render: function(prop){
                 var content = prop.content;
                 var events = prop.events;
@@ -384,7 +394,7 @@ function init_socket(uid){
     socketInstance.on('connect', function(msg){
         log("Socket connected");
         log("Do req_start");
-        gameState.emit('start', { loginFrom: "FB", name: currentName });
+        gameState.emit('start', { loginFrom: "FB", name: currentName, mail: currentEmail });
     });    
 
     //////////////////////////
@@ -462,10 +472,14 @@ function init_socket(uid){
             log("Showing Results");
             log("line: " + data.lineCount + " counts:" + data.correctCount);
 
-            data.name = currentName;
-            data.email = currentEmail;
+            // data.name = currentName;
+            // data.email = currentEmail;
 
-            gameState.showResultAndInput(data);
+            if(data.giftContent){
+                gameState.showResultAndInput(data);
+            }else{
+                gameState.showResult(data);
+            }
 
         }else{
             gameState.emit(data.navigate);
@@ -478,6 +492,7 @@ function init_socket(uid){
         if(data.toEnd){
             gameState.loading(true);
             log("=== THE END ===");
+            gameState.theEnd();
         }else{
             log("Continue to play");
             gameState.emit(data.navigate);
@@ -511,7 +526,6 @@ fjs.parentNode.insertBefore(js, fjs);
 }(document, 'script', 'facebook-jssdk'));
 
 function statusChangeCallback(response) {
-    log('statusChangeCallback');
     // The response object is returned with a status field that lets the
     // app know the current login status of the person.
     // Full docs on the response object can be found in the documentation

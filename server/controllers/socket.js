@@ -121,12 +121,14 @@ module.exports = function (socket, io) {
     var id = socket.unique_id;
     var strFrom = message.loginFrom || "FB";
     var name = message.name;
+    var mail = message.mail;
     var navigate;
 
     if(!idToGameStatus[strFrom]) return;
     gameStatus = idToGameStatus[strFrom][id] = {
       id: id,
       username: name,
+      usermail: mail,
       player_id: 0,
       maxlines: 0,
       correctCount: 0,
@@ -140,7 +142,7 @@ module.exports = function (socket, io) {
       blocks: Create2DArray(5)  // values: -1, 0, 1
     };
     // load answerlogs and status from DB if the player is exist.
-    service.getOrCreatePlayer(id, strFrom).then(function(res){
+    service.getOrCreatePlayer(id, strFrom, { name: name, mail: mail }).then(function(res){
       if(res){
         // player db id
         gameStatus.player_id = res.id;
@@ -350,9 +352,10 @@ module.exports = function (socket, io) {
         var createUrl = [
           baseUrl, 'createshare', 
           encodeURIComponent(gameStatus.username),
-          encodeURIComponent(gameStatus.currentEarn), 
+          gameStatus.currentEarn? encodeURIComponent(gameStatus.currentEarn) : "0", 
           data.correctCount, data.lineCount
         ].join('/');
+        console.log(createUrl);
         webshot(createUrl, path.resolve(__dirname, '../../uploads/' + gameStatus.id + '.png'), { shotSize: { width: 610, height: 325 } }, function(err) {
           if(err) console.log(err);
           else console.log(gameStatus.id + ".png Saved");
@@ -369,41 +372,47 @@ module.exports = function (socket, io) {
     if(!gameStatus.id) return;
     if(validRules.call(gameStatus, 'end')){
       var navigate;
-      if(gameStatus.currentEarn){
-        // to end
-        if(!_.isEmpty(message.name) && !_.isEmpty(message.address)){
-          // to end
-          // make the status to end and also write user to DB  
-          gameStatus.status = "end";
-          service.updatePlayer({
-            id: gameStatus.player_id,
-            name: message.name,
-            address: message.address,
-            status: "end"
-          });
+      // if(gameStatus.currentEarn){
+      //   // to end
+      //   if(!_.isEmpty(message.name) && !_.isEmpty(message.address)){
+      //     // to end
+      //     // make the status to end and also write user to DB  
+      //     gameStatus.status = "end";
+      //     service.updatePlayer({
+      //       id: gameStatus.player_id,
+      //       name: message.name,
+      //       address: message.address,
+      //       status: "end"
+      //     });
 
-        }else{
-          // some thing missing
-          // as continue
-          // make the status to playing
-          gameStatus.status = "playing";
-          gameStatus.currentAction = "answer_question";
-          navigate = "check_blocks";
-          service.updatePlayer({
-            id: gameStatus.player_id,
-            status: "playing"
-          });
+      //   }else{
+      //     // some thing missing
+      //     // as continue
+      //     // make the status to playing
+      //     gameStatus.status = "playing";
+      //     gameStatus.currentAction = "answer_question";
+      //     navigate = "check_blocks";
+      //     service.updatePlayer({
+      //       id: gameStatus.player_id,
+      //       status: "playing"
+      //     });
 
-        }
-      }else{
-        // just to end
-        // make the status to end
-        gameStatus.status = "end";
-        service.updatePlayer({
-          id: gameStatus.player_id,
-          status: "end"
-        });
-      }
+      //   }
+      // }else{
+      //   // just to end
+      //   // make the status to end
+      //   gameStatus.status = "end";
+      //   service.updatePlayer({
+      //     id: gameStatus.player_id,
+      //     status: "end"
+      //   });
+      // }
+
+      gameStatus.status = "end";
+      service.updatePlayer({
+        id: gameStatus.player_id,
+        status: "end"
+      });
 
       // { toEnd: Boolean }
       socket.emit('res_end', { toEnd: !navigate, navigate: navigate } );  

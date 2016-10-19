@@ -208,8 +208,10 @@ exports.removePlayer = function(body){
 //   block_position: {type: "string", maxlength: 64},
 //   created_at: {type: "dateTime", defaultTo: 'now' }
 // }
-exports.getOrCreatePlayer = function(unique_id, from){
+exports.getOrCreatePlayer = function(unique_id, from, opts){
   if(!unique_id || !from) return Promise.resolve(false);
+  var name = opts.name || "";
+  var mail = opts.mail || "";
   return Bookshelf.knex('players').where( {unique_id: unique_id, from: from} ).select('*')
     .then(function(results){
       if(results.length > 0){
@@ -223,7 +225,7 @@ exports.getOrCreatePlayer = function(unique_id, from){
         ]).then(function(){ return user; });
       }else{
         // not found
-        return Players.forge().create({ unique_id: unique_id, g_id: 0, from: from });
+        return Players.forge().create({ unique_id: unique_id, g_id: 0, from: from, name: name, address: mail });
       }
     });
 };
