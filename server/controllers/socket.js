@@ -323,6 +323,7 @@ module.exports = function (socket, io) {
         data.lineCount = gameStatus.maxlines;
         data.correctCount = gameStatus.correctCount;
         data.giftContent = gameStatus.currentEarn;
+        data.hasEmpty = getNextValidBlock.call(gameStatus) !== false;
         
         // return
         socket.emit('res_check_gift', data);  

@@ -49,8 +49,12 @@
 		        <p class="good_a result">目前答對<span>{{ correctCount }}</span>題  連線數<span>{{ lineCount }}</span></p>
 		        <p class="good_b">目前獎品 {{ giftContent }} </p>
 		        <div class="btn_w_line">
-		            <button class="ThatsAll">這樣就好</button>
+		            {{#if (equal canContinue 1)}}
+		            <button class="ThatsAll">我要領獎</button>
 		            <button class="carryOn">繼續挑戰</button>
+		            {{else}}
+		            <button class="ThatsAll center">我要領獎</button>
+		            {{/if}}
 		        </div>
 		    </div>
 		</div>
@@ -67,7 +71,7 @@
 		        	{{#if (equal hasGift 1)}}
 		        	<p class="good_b">感謝您的參與。您的獎品是 <span>{{ giftContent }}</span> </p>
 		        	{{else}}
-		        	<p class="good_b">您的成績無法獲得獎品或獎品已發放完畢。謝謝您的參與。</p>
+		        	<p class="good_b">您的成績無法獲得獎品或獎品已發放完畢<br/>o(〒﹏〒)o<br/><br/>謝謝您的參與<br/>ლ(❛◡❛✿)ლ</p>
 		        	{{/if}}
 		        	{{#if (equal showInput 1)}}
 		            <p class="good_b">

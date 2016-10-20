@@ -463,6 +463,9 @@ function init_socket(uid){
         }else{
             log("No new gift");
         }
+
+        if(data.hasEmpty) data.canContinue = 1;
+
         gameState.showScore(data);
     });
 
