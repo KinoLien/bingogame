@@ -41,8 +41,9 @@ function randomItem(items){
                 display: 'popup',
                 href: location.href,
                 picture: 'http://' + location.host + '/share/' + window.FB.getUserID(),
-                caption: '性連性 賓果得獎金'
-                // description: ''
+                // caption: '性連性 賓果得獎金',
+                title: '【性連性　賓果得獎金】 遊戲成績',
+                description: '您好：歡迎來到【性連性　賓果得獎金】「希望藉由輕鬆的賓果遊戲＆小獎品，讓大家都可以學到正確的性傳染病知識唷！獎品有限，晚來就ｎｏｓｕ囉ＸＤ　快來吧！」'
             }, function(response){});
         }
     };
