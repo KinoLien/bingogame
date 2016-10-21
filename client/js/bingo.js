@@ -105,7 +105,7 @@ function randomItem(items){
         var renderData = {};
         var xy = callbackData.block;
         var nextTask = callbackData.navigate;
-        renderData.time = 10;
+        renderData.time = 15;
         renderData.number = xy.x * 5 + (xy.y + 1);
         renderData.content = callbackData.question.content;
         renderData.options = callbackData.question.options;
@@ -116,7 +116,7 @@ function randomItem(items){
         modal.render({
             content: questionRegion( renderData ),
             events: [
-                { selector: ".ok", event: "click", toClose:true }
+                { selector: ".ok", event: "click", toClose:true, disableSelf:true }
             ],
             beforeOpen: function(){
                 $(this.baseSelector).find("li.aBox .s_radio, li.aBox p label").click(function(e){
@@ -161,7 +161,7 @@ function randomItem(items){
         modal.render({
             content: answerRegion( callbackData ),
             events:[
-                { selector: ".ok", event: "click", toClose:true }
+                { selector: ".ok", event: "click", toClose:true, disableSelf:true }
             ]
         });
 
@@ -178,8 +178,8 @@ function randomItem(items){
         modal.render({
             content: scoreRegion( callbackData ),
             events: [
-                { selector: ".ThatsAll", event: "click", toClose:true, fn: function(){ modal.setNextTask(nextTask); } },
-                { selector: ".carryOn", event: "click", toClose:true, fn: function(){ modal.setNextTask(nextTask, {continue: true}); } }
+                { selector: ".ThatsAll", event: "click", toClose:true, fn: function(){ modal.setNextTask(nextTask); }, disableSelf:true },
+                { selector: ".carryOn", event: "click", toClose:true, fn: function(){ modal.setNextTask(nextTask, {continue: true}); }, disableSelf:true }
             ],
         });
         
@@ -199,7 +199,7 @@ function randomItem(items){
         modal.render({
             content: resultRegion( callbackData ),
             events: [
-                { selector: ".ok", event: "click", toClose: true, fn: function(){ gameState.theEnd(); }  },
+                { selector: ".ok", event: "click", toClose: true, fn: function(){ gameState.theEnd(); }, disableSelf:true  },
                 { selector: ".shareBox .fb", event: "click", fn: function(){ gameState.share(); } }
             ]
         });
@@ -223,7 +223,7 @@ function randomItem(items){
             content: resultRegion( callbackData ),
             events: [
                 { selector: "a.fillForm", event: "click", fn:function(){ gameState.panelModal.showElement(".ok"); } },
-                { selector: ".ok", event:"click", toClose:true, fn: function(){ gameState.theEnd(); } },
+                { selector: ".ok", event:"click", toClose:true, fn: function(){ gameState.theEnd(); }, disableSelf:true },
                 { selector: ".shareBox .fb", event: "click", fn: function(){ gameState.share(); } }
             ]
         });
@@ -280,13 +280,16 @@ function randomItem(items){
                     var scope = this;
                     for(var i = 0, len = events.length; i < len; i++){
                         var item = events[i];
+                        var targets = $(renderSelector).find(item.selector);
                         if(item.fn){
-                            $(renderSelector).find(item.selector).on(item.event, item.fn);    
+                            targets.on(item.event, item.fn);    
                         }
                         if(item.toClose){
-                            $(renderSelector).find(item.selector).on(item.event, function(){ scope.close(); } );
+                            targets.on(item.event, function(){ scope.close(); } );
                         }
-                        
+                        if(item.disableSelf){
+                            targets.on(item.event, function(){ targets.attr("disabled", true); });
+                        }
                     }
                 }
 
@@ -307,6 +310,7 @@ function randomItem(items){
                 $(openSelector).css("display", "block");
                 setTimeout(function(){ $(openSelector).css("opacity", 1); }, 100);
                 setTimeout(function(){ if(scope.afterOpen) scope.afterOpen(); }, 500);
+                window.scrollTo(0,0);
             },
             close: function(){
                 var scope = this;

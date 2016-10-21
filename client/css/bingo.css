@@ -240,7 +240,7 @@ select {-moz-appearance: none;  text-indent: 0.01px; text-overflow: '';}
 .pop_close{ cursor: pointer; position: absolute; ; top: -25px; right: -25px; width: 37px; height: 37px; z-index: 1000; display: block; background: url(../images/the_pop_btn_close.png) center center no-repeat; background-size: contain;}
 .pop_close:hover{ opacity: .9; }
 
-.pop_info{ width: 100%; position: fixed; top:30px; z-index: 990;}
+.pop_info{ width: 100%; position: absolute; top:20px; z-index: 990;}
 .pop_info .QBox{ position: relative; width: 86%; max-width: 800px; margin: 0 auto; padding: 50px 75px; overflow-y:auto;  background: url(../images/br_01.jpg) center center no-repeat #343436; border: 5px solid #dddddd; border-radius: 55px;}
 .pop_info .QBox p, .pop_info .QBox h3{ color: #fff; font-weight: bold;text-align: justify; }
 
