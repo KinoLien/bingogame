@@ -222,7 +222,7 @@ function randomItem(items){
             beforeOpen: function(){ this.hideElement(".ok"); },
             content: resultRegion( callbackData ),
             events: [
-                { selector: "a.fillForm", event: "click", toClose:true },
+                { selector: "a.fillForm", event: "click", fn:function(){ gameState.panelModal.showElement(".ok"); } },
                 { selector: ".ok", event:"click", toClose:true, fn: function(){ gameState.theEnd(); }, disableSelf:true },
                 { selector: ".shareBox .fb", event: "click", fn: function(){ gameState.share(); } }
             ]
