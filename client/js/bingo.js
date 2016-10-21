@@ -222,7 +222,7 @@ function randomItem(items){
             beforeOpen: function(){ this.hideElement(".ok"); },
             content: resultRegion( callbackData ),
             events: [
-                { selector: "a.fillForm", event: "click", fn:function(){ gameState.panelModal.showElement(".ok"); } },
+                { selector: "a.fillForm", event: "click", toClose:true },
                 { selector: ".ok", event:"click", toClose:true, fn: function(){ gameState.theEnd(); }, disableSelf:true },
                 { selector: ".shareBox .fb", event: "click", fn: function(){ gameState.share(); } }
             ]
@@ -322,6 +322,7 @@ function randomItem(items){
                     if(scope.afterClose) scope.afterClose();
                     if(scope.nextTask) gameState.emit(scope.nextTask.task, scope.nextTask.data);
                     $(renderSelector).html("");
+                    window.scrollTo(0,0);
                 }, 500);
             }
         };
