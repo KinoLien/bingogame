@@ -192,7 +192,7 @@ function randomItem(items){
         var modal = this.panelModal;
 
         if(next) modal.setNextTask(next);
-        else modal.removeNextTash();
+        else modal.removeNextTask();
 
         callbackData.hasGift = callbackData.giftContent? 1 : 0;
 
@@ -212,7 +212,7 @@ function randomItem(items){
         var modal = this.panelModal;
 
         if(nextTask) modal.setNextTask(nextTask);
-        else modal.removeNextTash();
+        else modal.removeNextTask();
 
         callbackData.hasGift = callbackData.giftContent? 1 : 0;
         callbackData.showInput = 1;
@@ -226,6 +226,7 @@ function randomItem(items){
                     e.preventDefault();
                     window.open($(this).attr('href'), 'targetWindow', 'toolbar=no,location=0,status=no,menubar=no,scrollbars=yes,resizable=yes,width=600,height=400');
                     gameState.panelModal.showElement(".ok"); 
+                    gameState.panelModal.removeNextTask();
                     gameState.emit(nextTask, { noCallback:true });
                     return false;
                 } },
@@ -308,7 +309,7 @@ function randomItem(items){
             setNextTask: function(taskName, data){
                 this.nextTask = { task: taskName, data: data };
             },
-            removeNextTash: function(){ this.nextTask = null; },
+            removeNextTask: function(){ this.nextTask = null; },
             open: function(){
                 var scope = this;
                 if(scope.beforeOpen) scope.beforeOpen();
