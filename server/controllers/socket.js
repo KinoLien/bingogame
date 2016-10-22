@@ -368,47 +368,12 @@ module.exports = function (socket, io) {
     }
   });
 
-  // { name:String, address:String }
+  // { noCallback: true }
   socket.on('req_end', function(message){
     if(!gameStatus.id) return;
     if(validRules.call(gameStatus, 'end')){
       var navigate;
-      // if(gameStatus.currentEarn){
-      //   // to end
-      //   if(!_.isEmpty(message.name) && !_.isEmpty(message.address)){
-      //     // to end
-      //     // make the status to end and also write user to DB  
-      //     gameStatus.status = "end";
-      //     service.updatePlayer({
-      //       id: gameStatus.player_id,
-      //       name: message.name,
-      //       address: message.address,
-      //       status: "end"
-      //     });
-
-      //   }else{
-      //     // some thing missing
-      //     // as continue
-      //     // make the status to playing
-      //     gameStatus.status = "playing";
-      //     gameStatus.currentAction = "answer_question";
-      //     navigate = "check_blocks";
-      //     service.updatePlayer({
-      //       id: gameStatus.player_id,
-      //       status: "playing"
-      //     });
-
-      //   }
-      // }else{
-      //   // just to end
-      //   // make the status to end
-      //   gameStatus.status = "end";
-      //   service.updatePlayer({
-      //     id: gameStatus.player_id,
-      //     status: "end"
-      //   });
-      // }
-
+     
       gameStatus.status = "end";
       service.updatePlayer({
         id: gameStatus.player_id,
@@ -416,7 +381,7 @@ module.exports = function (socket, io) {
       });
 
       // { toEnd: Boolean }
-      socket.emit('res_end', { toEnd: !navigate, navigate: navigate } );  
+      socket.emit('res_end', { toEnd: !navigate, stopEvent:(message && message.noCallback === true), navigate: navigate } );          
     }
   });
 

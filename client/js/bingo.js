@@ -222,7 +222,13 @@ function randomItem(items){
             beforeOpen: function(){ this.hideElement(".ok"); },
             content: resultRegion( callbackData ),
             events: [
-                { selector: "a.fillForm", event: "click", fn:function(){ gameState.panelModal.showElement(".ok"); } },
+                { selector: "a.fillForm", event: "click", fn:function(e){ 
+                    e.preventDefault();
+                    window.open($(this).attr('href'), 'targetWindow', 'toolbar=no,location=0,status=no,menubar=no,scrollbars=yes,resizable=yes,width=600,height=400');
+                    gameState.panelModal.showElement(".ok"); 
+                    gameState.emit(nextTask, { noCallback:true });
+                    return false;
+                } },
                 { selector: ".ok", event:"click", toClose:true, fn: function(){ gameState.theEnd(); }, disableSelf:true },
                 { selector: ".shareBox .fb", event: "click", fn: function(){ gameState.share(); } }
             ]
@@ -497,9 +503,11 @@ function init_socket(uid){
 
     // data.toEnd
     // data.navigate
+    // data.stopEvent
     socketInstance.on('res_end', function(data){
+        gameState.loading(true);
+        if(data.stopEvent) return;
         if(data.toEnd){
-            gameState.loading(true);
             log("=== THE END ===");
             gameState.theEnd();
         }else{
