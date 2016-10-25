@@ -31,7 +31,13 @@ module.exports = function(app, passport) {
   // GAME ================================
   // =====================================
   app.get('/', function(req, res, next){
-    res.render(path.resolve(__dirname, '../', 'views/bingo/index.ejs'));
+    service.getRemainGifts().then(function(remains){
+      if(remains && remains.length){
+        res.render(path.resolve(__dirname, '../', 'views/bingo/index.ejs'), { noGifts: false });
+      }else{
+        res.render(path.resolve(__dirname, '../', 'views/bingo/index.ejs'), { noGifts: true });
+      }
+    });
   });
 
   app.get('/client/:type(css|js|images)/:name', function(req, res, next) {
